@@ -2,11 +2,21 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="Automata.Desktop.App"
              xmlns:local="using:Automata.Desktop"
-             RequestedThemeVariant="Default">
+             RequestedThemeVariant="Default"
+             xmlns:vm="using:Automata.Desktop.ViewModels"
+             xmlns:views="using:Automata.Desktop.Views">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
     <Application.DataTemplates>
-        <local:ViewLocator/>
+        <DataTemplate DataType="vm:MainPageViewModel">
+            <views:MainPage/>
+        </DataTemplate>
+
+        <DataTemplate DataType="vm:AdministrationPageViewModel">
+            <views:AdministrationPage/>
+        </DataTemplate>
+       
+
     </Application.DataTemplates>
   
     <Application.Styles>
