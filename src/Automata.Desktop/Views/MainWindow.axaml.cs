@@ -1,3 +1,4 @@
+using Automata.Desktop.ViewModels;
 using Avalonia.Controls;
 
 namespace Automata.Desktop.Views
@@ -7,6 +8,8 @@ namespace Automata.Desktop.Views
         public MainWindow()
         {
             InitializeComponent();
+
+            DataContext = new MainWindowViewModel();
         }
     }
 }
