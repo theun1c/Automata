@@ -6,4 +6,9 @@
         <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Automata.Application\Automata.Application.csproj" />
+      <ProjectReference Include="..\Automata.Infrastructure\Automata.Infrastructure.csproj" />
+    </ItemGroup>
+
 </Project>
