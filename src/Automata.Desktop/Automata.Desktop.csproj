@@ -31,4 +31,9 @@
     </PackageReference>
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.1" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Automata.Application\Automata.Application.csproj" />
+    <ProjectReference Include="..\Automata.Infrastructure\Automata.Infrastructure.csproj" />
+  </ItemGroup>
 </Project>
