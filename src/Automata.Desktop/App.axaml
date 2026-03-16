@@ -6,19 +6,7 @@
              xmlns:vm="using:Automata.Desktop.ViewModels"
              xmlns:views="using:Automata.Desktop.Views">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
-
-    <Application.DataTemplates>
-        <DataTemplate DataType="vm:MainPageViewModel">
-            <views:MainPage/>
-        </DataTemplate>
-
-        <DataTemplate DataType="vm:AdministrationPageViewModel">
-            <views:AdministrationPage/>
-        </DataTemplate>
-       
-
-    </Application.DataTemplates>
-  
+             
     <Application.Styles>
         <FluentTheme />
     </Application.Styles>

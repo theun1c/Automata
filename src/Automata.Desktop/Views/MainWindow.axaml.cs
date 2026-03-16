@@ -8,8 +8,6 @@ namespace Automata.Desktop.Views
         public MainWindow()
         {
             InitializeComponent();
-
-            DataContext = new MainWindowViewModel();
         }
     }
 }
