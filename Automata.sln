@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Automata.Infrastructure", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Automata.Web", "src\Automata.Web\Automata.Web.csproj", "{BD90E425-EFBF-405D-A8DD-0713C70C8B14}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Automata.Tests", "tests\Automata.Tests\Automata.Tests.csproj", "{A6487AFF-388C-4ADB-952B-CAAF5407AD48}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{BD90E425-EFBF-405D-A8DD-0713C70C8B14}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BD90E425-EFBF-405D-A8DD-0713C70C8B14}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BD90E425-EFBF-405D-A8DD-0713C70C8B14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A6487AFF-388C-4ADB-952B-CAAF5407AD48}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6487AFF-388C-4ADB-952B-CAAF5407AD48}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6487AFF-388C-4ADB-952B-CAAF5407AD48}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6487AFF-388C-4ADB-952B-CAAF5407AD48}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
