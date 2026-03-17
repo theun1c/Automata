@@ -1,0 +1,96 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:Automata.Desktop.ViewModels"
+             x:Class="Automata.Desktop.Views.MonitorTaView"
+             x:DataType="vm:MonitorTaViewModel"
+             x:CompileBindings="False"
+             mc:Ignorable="d">
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <TextBlock Text="Монитор торговых автоматов" FontSize="20" FontWeight="SemiBold" Foreground="#2A8FC7"/>
+            <Grid Grid.Row="1" Margin="0,10,0,0" ColumnDefinitions="1.3*,1.2*,1.5*,1.2*" ColumnSpacing="10">
+                <StackPanel>
+                    <TextBlock Text="Общее состояние" FontSize="12"/>
+                    <WrapPanel Margin="0,4,0,0">
+                        <Border Width="14" Height="14" CornerRadius="7" Background="#26C62F" Margin="0,0,8,0"/>
+                        <Border Width="14" Height="14" CornerRadius="7" Background="#E64141" Margin="0,0,8,0"/>
+                        <Border Width="14" Height="14" CornerRadius="7" Background="#2A9FDB"/>
+                    </WrapPanel>
+                </StackPanel>
+                <StackPanel Grid.Column="1">
+                    <TextBlock Text="Подключение" FontSize="12"/>
+                    <TextBox Margin="0,4,0,0" Text="4G / GSM / Wi-Fi / Ethernet"/>
+                </StackPanel>
+                <StackPanel Grid.Column="2">
+                    <TextBlock Text="Дополнительные статусы" FontSize="12"/>
+                    <TextBox Margin="0,4,0,0" Text="Бумага, дверь, офлайн, норма"/>
+                </StackPanel>
+                <StackPanel Grid.Column="3">
+                    <TextBlock Text="Сортировка" FontSize="12"/>
+                    <ComboBox Margin="0,4,0,0" SelectedIndex="0">
+                        <ComboBoxItem Content="По состоянию ТА"/>
+                        <ComboBoxItem Content="По названию ТА"/>
+                        <ComboBoxItem Content="По времени пинга"/>
+                    </ComboBox>
+                </StackPanel>
+            </Grid>
+        </Grid>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,10,0,8" Spacing="8">
+            <Button Content="Применить" Background="#2B97CE" Foreground="#FFFFFF" Width="110"/>
+            <Button Content="Очистить" Width="96"/>
+        </StackPanel>
+
+        <Border Grid.Row="2" BorderBrush="#BFC5CC" BorderThickness="1" Background="#FFFFFF">
+            <Grid RowDefinitions="Auto,*">
+                <Border Background="#ECEFF3" BorderBrush="#BFC5CC" BorderThickness="0,0,0,1" Padding="6">
+                    <Grid ColumnDefinitions="44,220,120,140,190,160,170,140,*" ColumnSpacing="8">
+                        <TextBlock Text="#" FontWeight="SemiBold"/>
+                        <TextBlock Grid.Column="1" Text="Торговый автомат" FontWeight="SemiBold"/>
+                        <TextBlock Grid.Column="2" Text="Связь" FontWeight="SemiBold"/>
+                        <TextBlock Grid.Column="3" Text="Загрузка" FontWeight="SemiBold"/>
+                        <TextBlock Grid.Column="4" Text="Денежные средства" FontWeight="SemiBold"/>
+                        <TextBlock Grid.Column="5" Text="События" FontWeight="SemiBold"/>
+                        <TextBlock Grid.Column="6" Text="Оборудование" FontWeight="SemiBold"/>
+                        <TextBlock Grid.Column="7" Text="Информация" FontWeight="SemiBold"/>
+                        <TextBlock Grid.Column="8" Text="Доп." FontWeight="SemiBold"/>
+                    </Grid>
+                </Border>
+
+                <ScrollViewer Grid.Row="1">
+                    <ItemsControl ItemsSource="{Binding Rows}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Padding="6" BorderBrush="#D5D9DF" BorderThickness="0,0,0,1">
+                                    <Grid ColumnDefinitions="44,220,120,140,190,160,170,140,*" ColumnSpacing="8">
+                                        <TextBlock Text="{Binding Number}"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding TradingPoint}" TextWrapping="Wrap"/>
+                                        <TextBlock Grid.Column="2" Text="{Binding Connection}" TextWrapping="Wrap"/>
+                                        <TextBlock Grid.Column="3" Text="{Binding Load}" TextWrapping="Wrap"/>
+                                        <TextBlock Grid.Column="4" Text="{Binding Cash}" TextWrapping="Wrap"/>
+                                        <TextBlock Grid.Column="5" Text="{Binding Events}" TextWrapping="Wrap"/>
+                                        <TextBlock Grid.Column="6" Text="{Binding Equipment}" TextWrapping="Wrap"/>
+                                        <TextBlock Grid.Column="7" Text="{Binding Information}" TextWrapping="Wrap"/>
+                                        <TextBlock Grid.Column="8" Text="{Binding Extra}" TextWrapping="Wrap"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="3" Margin="0,8,0,0" ColumnDefinitions="*,Auto">
+            <TextBlock Text="{Binding TotalMachines, StringFormat=Итого автоматов: {0}}" FontWeight="SemiBold"/>
+            <TextBlock Grid.Column="1" Text="{Binding TotalCash, StringFormat=Денег в автоматах: {0}}" FontWeight="SemiBold" Foreground="#2A8FC7"/>
+        </Grid>
+    </Grid>
+</UserControl>
