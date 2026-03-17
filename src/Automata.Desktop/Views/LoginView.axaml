@@ -1,0 +1,34 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:Automata.Desktop.ViewModels"
+             x:Class="Automata.Desktop.Views.LoginView"
+             x:DataType="vm:LoginViewModel"
+             mc:Ignorable="d">
+
+    <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,*" ColumnDefinitions="520,*" Margin="0,10,0,0">
+        <TextBlock Grid.ColumnSpan="2" Text="Вход в систему" FontSize="26" FontWeight="Bold" Foreground="#0F172A"/>
+        <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Margin="0,6,0,18" Text="Визуальный экран авторизации без реальной проверки учетных данных." Foreground="#64748B"/>
+
+        <TextBlock Grid.Row="2" Text="Email" FontWeight="SemiBold"/>
+        <TextBox Grid.Row="3" Width="520" Watermark="Введите email" Text="{Binding Email, Mode=TwoWay}"/>
+
+        <TextBlock Grid.Row="4" Margin="0,12,0,0" Text="Пароль" FontWeight="SemiBold"/>
+        <Grid Grid.Row="5" Width="520">
+            <TextBox IsVisible="{Binding ShowPassword}" Watermark="Введите пароль" Text="{Binding Password, Mode=TwoWay}"/>
+            <TextBox IsVisible="{Binding IsPasswordMasked}" Watermark="Введите пароль" Text="{Binding Password, Mode=TwoWay}" PasswordChar="●"/>
+        </Grid>
+
+        <CheckBox Grid.Row="6" Margin="0,10,0,0" Content="Показать пароль" IsChecked="{Binding ShowPassword, Mode=TwoWay}"/>
+
+        <StackPanel Grid.Row="7" Orientation="Horizontal" Spacing="12" Margin="0,14,0,0">
+            <Button Content="Вход" Width="160" Command="{Binding SignInCommand}"/>
+            <Button Content="К регистрации" Width="160" Command="{Binding GoToRegistrationCommand}"/>
+        </StackPanel>
+
+        <Border Grid.Row="8" Width="520" Margin="0,16,0,0" Padding="12" Background="#FEF2F2" BorderBrush="#FCA5A5" BorderThickness="1" CornerRadius="8">
+            <TextBlock Text="{Binding ErrorText}" Foreground="#B91C1C" TextWrapping="Wrap"/>
+        </Border>
+    </Grid>
+</UserControl>

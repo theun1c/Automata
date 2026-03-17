@@ -1,0 +1,82 @@
+
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:Automata.Desktop.ViewModels"
+             x:Class="Automata.Desktop.Views.RegistrationView"
+             x:DataType="vm:RegistrationViewModel"
+             x:CompileBindings="False"
+             mc:Ignorable="d">
+
+    <Grid>
+        <ScrollViewer>
+            <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,*" ColumnDefinitions="560,*">
+                <TextBlock Grid.ColumnSpan="2" Text="Регистрация франчайзера" FontSize="26" FontWeight="Bold"/>
+                <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Margin="0,8,0,16" Text="Только UI-состояния. Реальной отправки email и проверки кодов нет." Foreground="#64748B"/>
+
+                <TextBlock Grid.Row="2" Text="Email" FontWeight="SemiBold"/>
+                <TextBox Grid.Row="3" Width="560" Watermark="example@domain.ru" Text="{Binding Email, Mode=TwoWay}"/>
+
+                <TextBlock Grid.Row="4" Margin="0,12,0,0" Text="Пароль" FontWeight="SemiBold"/>
+                <TextBox Grid.Row="5" Width="560" Text="{Binding Password, Mode=TwoWay}" PasswordChar="●"/>
+
+                <Grid Grid.Row="6" ColumnDefinitions="*,*" Margin="0,12,0,0" ColumnSpacing="12">
+                    <StackPanel>
+                        <TextBlock Text="Код подтверждения" FontWeight="SemiBold"/>
+                        <TextBox Watermark="Введите код" Text="{Binding ConfirmationCode, Mode=TwoWay}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Text="Код франчайзи" FontWeight="SemiBold"/>
+                        <TextBox Watermark="Введите код франчайзи" Text="{Binding FranchiseCode, Mode=TwoWay}"/>
+                    </StackPanel>
+                </Grid>
+
+                <Border Grid.Row="7" Margin="0,14,0,0" Padding="12" CornerRadius="8" BorderBrush="#BFDBFE" BorderThickness="1" Background="#EFF6FF">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="CAPTCHA (минимум 3 операции)" FontWeight="SemiBold"/>
+                        <TextBlock Text="{Binding CaptchaChallenge}" FontSize="18" FontWeight="Bold"/>
+                        <TextBox Watermark="Ответ CAPTCHA" Text="{Binding CaptchaAnswer, Mode=TwoWay}"/>
+                    </StackPanel>
+                </Border>
+
+                <StackPanel Grid.Row="8" Orientation="Horizontal" Spacing="12" Margin="0,16,0,0">
+                    <Button Content="Показать mock-код" Width="180" Command="{Binding OpenCodeModalCommand}"/>
+                    <Button Content="Зарегистрироваться" Width="180" Command="{Binding RegisterCommand}"/>
+                    <Button Content="К входу" Width="140" Command="{Binding GoToLoginCommand}"/>
+                </StackPanel>
+
+                <Border Grid.Row="9" Margin="0,18,0,0" Padding="12" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="8" Background="#F8FAFC">
+                    <StackPanel Spacing="8">
+                        <TextBlock Text="Переключатель mock-состояний" FontWeight="SemiBold"/>
+                        <ComboBox Width="360" ItemsSource="{Binding StateOptions}" SelectedItem="{Binding SelectedStateOption}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Title}"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                        <Border Padding="10" BorderThickness="1" CornerRadius="6" BorderBrush="{Binding StateColor}">
+                            <TextBlock Text="{Binding StateMessage}" Foreground="{Binding StateColor}" TextWrapping="Wrap"/>
+                        </Border>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </ScrollViewer>
+
+        <Border IsVisible="{Binding IsCodeModalOpen}" Background="#AA0F172A">
+            <Grid VerticalAlignment="Center" HorizontalAlignment="Center" Width="420">
+                <Border Background="#FFFFFF" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="12" Padding="18">
+                    <StackPanel Spacing="10">
+                        <TextBlock Text="Эмуляция кода подтверждения" FontSize="20" FontWeight="Bold"/>
+                        <TextBlock Text="Для UI-этапа код показывается в модальном окне." Foreground="#64748B" TextWrapping="Wrap"/>
+                        <Border Padding="12" Background="#EEF2FF" CornerRadius="8">
+                            <TextBlock Text="{Binding GeneratedCode}" HorizontalAlignment="Center" FontSize="28" FontWeight="Bold"/>
+                        </Border>
+                        <Button Content="Закрыть" Width="120" HorizontalAlignment="Right" Command="{Binding CloseCodeModalCommand}"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>
