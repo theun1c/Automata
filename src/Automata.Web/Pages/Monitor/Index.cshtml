@@ -1,0 +1,154 @@
+@page
+@model Automata.Web.Pages.Monitor.IndexModel
+@{
+    ViewData["Title"] = "Монитор ТА";
+    ViewData["TopPath"] = "Главная / Монитор ТА";
+}
+
+<section class="monitor-panel">
+    <div class="monitor-header">
+        <h1>Монитор торговых автоматов</h1>
+        <div class="monitor-view-toggle">▦ ▤</div>
+    </div>
+
+    <form method="get" class="monitor-filters">
+        <div>
+            <div class="monitor-filter-title">Общее состояние</div>
+            <div class="state-dots">
+                @foreach (var option in Model.StateOptions)
+                {
+                    var dotClass = option.Value switch
+                    {
+                        "working" => "working",
+                        "stopped" => "stopped",
+                        _ => "service"
+                    };
+
+                    <label class="monitor-pill">
+                        <input type="checkbox" name="SelectedStates" value="@option.Value" checked="@Model.IsStateChecked(option.Value)"/>
+                        <span class="state-dot @dotClass"></span>
+                    </label>
+                }
+            </div>
+        </div>
+
+        <div>
+            <div class="monitor-filter-title">Подключение</div>
+            <div class="monitor-pill-set">
+                @foreach (var option in Model.ConnectionTypeOptions)
+                {
+                    <label class="monitor-pill">
+                        <input type="radio" name="SelectedConnectionType" value="@option.Value" checked="@Model.IsSelectedConnectionType(option.Value)"/>
+                        <span>@option.Label</span>
+                    </label>
+                }
+                <label class="monitor-pill">
+                    <input type="radio" name="SelectedConnectionType" value="" checked="@string.IsNullOrWhiteSpace(Model.SelectedConnectionType)"/>
+                    <span>Все</span>
+                </label>
+            </div>
+        </div>
+
+        <div>
+            <div class="monitor-filter-title">Дополнительные статусы</div>
+            <div class="monitor-pill-set">
+                @foreach (var option in Model.AdditionalStatusOptions)
+                {
+                    <label class="monitor-pill">
+                        <input type="checkbox" name="SelectedAdditionalStatuses" value="@option.Value" checked="@Model.IsAdditionalStatusChecked(option.Value)"/>
+                        <span>@option.Label</span>
+                    </label>
+                }
+            </div>
+        </div>
+
+        <div>
+            <div class="monitor-filter-title">Сортировка</div>
+            <select name="SortBy" class="form-select monitor-sort-select">
+                @foreach (var option in Model.SortOptions)
+                {
+                    <option value="@option.Value" selected="@(Model.SortBy == option.Value)">@option.Label</option>
+                }
+            </select>
+        </div>
+
+        <div class="monitor-actions">
+            <button type="submit" name="apply" value="true" class="monitor-btn primary">Применить</button>
+            <a asp-page="/Monitor/Index" class="monitor-btn text-decoration-none text-dark">Очистить</a>
+        </div>
+    </form>
+
+    <div class="monitor-summary-line">
+        Итого автоматов: <span class="accent">@Model.TotalMachines</span>.
+        Денег в автоматах: <span class="accent">@Model.TotalCash.ToString("N0") ₽</span>
+    </div>
+
+    @if (!Model.HasRows)
+    {
+        <div class="monitor-empty-state">
+            Нет активных торговых автоматов, соответствующих заданному фильтру
+        </div>
+    }
+    else
+    {
+        <div class="monitor-table-wrap">
+            <table class="monitor-table">
+                <thead>
+                <tr>
+                    <th>№</th>
+                    <th>ТП</th>
+                    <th>Связь</th>
+                    <th>Загрузка</th>
+                    <th>Денежные средства</th>
+                    <th>События</th>
+                    <th>Оборудование</th>
+                    <th>Информация</th>
+                    <th>Доп.</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var row in Model.Rows)
+                {
+                    var stateClass = row.State switch
+                    {
+                        "working" => "working",
+                        "stopped" => "stopped",
+                        _ => "service"
+                    };
+
+                    <tr>
+                        <td>@row.Number</td>
+                        <td>
+                            <div><strong>@row.TradingPoint</strong></div>
+                            <div>@row.MachineName</div>
+                        </td>
+                        <td>
+                            <div class="monitor-status @stateClass">@row.StateLabel</div>
+                            <div>@row.ConnectionLabel</div>
+                        </td>
+                        <td>
+                            Общая: <strong>@row.TotalLoadPercent%</strong><br/>
+                            Мин.: <strong>@row.MinLoadPercent%</strong>
+                        </td>
+                        <td>
+                            @row.Coins.ToString("N0") ₽ (монет)<br/>
+                            @row.Bills.ToString("N0") ₽ (купюр)<br/>
+                            @row.Change.ToString("N0") ₽ (сдача)<br/>
+                            <strong>@row.CashTotal.ToString("N0") ₽</strong>
+                        </td>
+                        <td>@row.Events</td>
+                        <td>@row.Equipment</td>
+                        <td>@row.Information</td>
+                        <td>@row.Extra</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <div class="monitor-foot">
+        <div>Итого автоматов: @Model.TotalMachines</div>
+        <a class="monitor-export-link" href="#">Экспорт в Excel</a>
+    </div>
+</section>
