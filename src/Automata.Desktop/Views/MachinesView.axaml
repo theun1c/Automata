@@ -1,0 +1,131 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:Automata.Desktop.ViewModels"
+             x:Class="Automata.Desktop.Views.MachinesView"
+             x:DataType="vm:MachinesViewModel"
+             x:CompileBindings="False"
+             x:Name="Root"
+             mc:Ignorable="d">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Spacing="1" Margin="4,0,4,8">
+            <TextBlock Text="Торговые автоматы" FontSize="20" FontWeight="SemiBold" Foreground="#2A8FC7"/>
+            <TextBlock Text="{Binding RecordsCounterText, StringFormat=Всего найдено {0} шт.}" FontSize="12" Foreground="#4B5563"/>
+        </StackPanel>
+
+        <Border Grid.Row="1" BorderBrush="#D7D7D7" BorderThickness="1" Background="#F6F6F6" Padding="10" Margin="0,0,0,8">
+            <Grid ColumnDefinitions="Auto,Auto,Auto,240,Auto,Auto,Auto,*" ColumnSpacing="8" VerticalAlignment="Center">
+                <TextBlock Text="Показать" VerticalAlignment="Center"/>
+                <ComboBox Grid.Column="1" Width="76" ItemsSource="{Binding PageSizeOptions}" SelectedItem="{Binding SelectedPageSize}"/>
+                <TextBlock Grid.Column="2" Text="записей" VerticalAlignment="Center"/>
+
+                <TextBox Grid.Column="3" Watermark="Фильтр" Text="{Binding FilterName, Mode=TwoWay}"/>
+                <Button Grid.Column="4" Content="Применить" Command="{Binding ApplyFilterCommand}" Width="96"/>
+                <Button Grid.Column="5" Content="Очистить" Command="{Binding ClearFilterCommand}" Width="92"/>
+                <Button Grid.Column="6" Content="+ Добавить" Command="{Binding OpenCreateMachineFormCommand}" Width="112"/>
+
+                <StackPanel Grid.Column="7" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+                    <Button Content="⟳ Экспорт" Command="{Binding ExportCsvCommand}" Width="102"/>
+                    <Button Content="▦/▤" Command="{Binding ToggleViewCommand}" Width="64"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="2">
+            <Border IsVisible="{Binding IsTableView}" BorderBrush="#CFCFCF" BorderThickness="1" Background="#FFFFFF">
+                <Grid RowDefinitions="Auto,*">
+                    <Border Background="#EFEFEF" BorderBrush="#D4D4D4" BorderThickness="0,0,0,1" Padding="8">
+                        <Grid ColumnDefinitions="70,220,145,200,130,220,115,250" ColumnSpacing="8">
+                            <TextBlock Text="ID" FontWeight="Bold"/>
+                            <TextBlock Grid.Column="1" Text="Название автомата" FontWeight="Bold"/>
+                            <TextBlock Grid.Column="2" Text="Модель" FontWeight="Bold"/>
+                            <TextBlock Grid.Column="3" Text="Компания" FontWeight="Bold"/>
+                            <TextBlock Grid.Column="4" Text="Модем" FontWeight="Bold"/>
+                            <TextBlock Grid.Column="5" Text="Адрес / Место" FontWeight="Bold"/>
+                            <TextBlock Grid.Column="6" Text="В работе с" FontWeight="Bold"/>
+                            <TextBlock Grid.Column="7" Text="Действия" FontWeight="Bold"/>
+                        </Grid>
+                    </Border>
+
+                    <ScrollViewer Grid.Row="1">
+                        <ItemsControl ItemsSource="{Binding VisibleMachines}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Padding="8" BorderBrush="#E1E1E1" BorderThickness="0,0,0,1" Background="{Binding RowBackground}">
+                                        <Grid ColumnDefinitions="70,220,145,200,130,220,115,250" ColumnSpacing="8">
+                                            <TextBlock Text="{Binding Id}" VerticalAlignment="Center"/>
+                                            <TextBlock Grid.Column="1" Text="{Binding Name}" TextWrapping="Wrap"/>
+                                            <TextBlock Grid.Column="2" Text="{Binding Model}" TextWrapping="Wrap"/>
+                                            <TextBlock Grid.Column="3" Text="{Binding Company}" TextWrapping="Wrap" Foreground="#2A8FC7"/>
+                                            <TextBlock Grid.Column="4" Text="{Binding ModemDisplay}" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                            <TextBlock Grid.Column="5" Text="{Binding Place}" TextWrapping="Wrap"/>
+                                            <TextBlock Grid.Column="6" Text="{Binding ActiveFrom}" VerticalAlignment="Center"/>
+                                            <StackPanel Grid.Column="7" Orientation="Horizontal" Spacing="6">
+                                                <Button Content="Ред." Width="62"
+                                                        Command="{Binding DataContext.OpenEditMachineFormCommand, ElementName=Root}"
+                                                        CommandParameter="{Binding}"/>
+                                                <Button Content="Удал." Width="68"
+                                                        Command="{Binding DataContext.AskDeleteMachineCommand, ElementName=Root}"
+                                                        CommandParameter="{Binding}"/>
+                                                <Button Content="Отвяз." Width="74"
+                                                        Command="{Binding DataContext.AskUnbindModemCommand, ElementName=Root}"
+                                                        CommandParameter="{Binding}"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+
+            <ScrollViewer IsVisible="{Binding IsTileView}">
+                <ItemsControl ItemsSource="{Binding VisibleMachines}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel ItemWidth="318" ItemHeight="208"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Margin="0,0,10,10" Padding="10" Width="300" Height="190" BorderBrush="#D2D2D2" BorderThickness="1" Background="{Binding RowBackground}">
+                                <StackPanel Spacing="6">
+                                    <TextBlock Text="{Binding Name}" FontSize="14" FontWeight="SemiBold"/>
+                                    <TextBlock Text="{Binding Model}" Foreground="#374151"/>
+                                    <TextBlock Text="{Binding Company}" Foreground="#2A8FC7"/>
+                                    <TextBlock Text="{Binding Place}" TextWrapping="Wrap"/>
+                                    <TextBlock Text="{Binding ModemDisplay, StringFormat=Модем: {0}}" FontWeight="SemiBold"/>
+                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                        <Button Content="Редактировать"
+                                                Command="{Binding DataContext.OpenEditMachineFormCommand, ElementName=Root}"
+                                                CommandParameter="{Binding}"/>
+                                        <Button Content="Удалить"
+                                                Command="{Binding DataContext.AskDeleteMachineCommand, ElementName=Root}"
+                                                CommandParameter="{Binding}"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Grid>
+
+        <Grid Grid.Row="3" ColumnDefinitions="*,Auto,Auto,Auto" Margin="0,8,0,0" ColumnSpacing="8">
+            <TextBlock VerticalAlignment="Center" Text="{Binding RecordsCounterText, StringFormat=Записи {0}}" Foreground="#4B5563"/>
+            <TextBlock Grid.Column="1" VerticalAlignment="Center" Text="{Binding PageText}"/>
+            <Button Grid.Column="2" Content="◀" Width="40" Command="{Binding PrevPageCommand}" IsEnabled="{Binding CanGoPrev}"/>
+            <Button Grid.Column="3" Content="▶" Width="40" Command="{Binding NextPageCommand}" IsEnabled="{Binding CanGoNext}"/>
+        </Grid>
+    </Grid>
+</UserControl>
