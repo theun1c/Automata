@@ -3,16 +3,147 @@
         xmlns:vm="using:Automata.Desktop.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        mc:Ignorable="d" d:DesignWidth="1440" d:DesignHeight="900"
         x:Class="Automata.Desktop.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
-        Title="Automata.Desktop">
+        Title="Automata.Desktop"
+        MinWidth="1200"
+        MinHeight="760"
+        Width="1440"
+        Height="900">
 
     <Design.DataContext>
-        <!-- This only sets the DataContext for the previewer in an IDE,
-             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
+    <Window.Styles>
+        <Style Selector="Button.nav">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#D8E0EA"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Padding" Value="14,10"/>
+            <Setter Property="FontSize" Value="17"/>
+        </Style>
+        <Style Selector="Button.nav:pointerover">
+            <Setter Property="Background" Value="#202A3E"/>
+        </Style>
+        <Style Selector="Button.nav:pressed">
+            <Setter Property="Background" Value="#26344D"/>
+        </Style>
+        <Style Selector="TextBlock.nav-group">
+            <Setter Property="Foreground" Value="#C8D0DC"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="Margin" Value="14,10,14,4"/>
+        </Style>
+        <Style Selector="Button.nav-sub">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#BCC7D9"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Padding" Value="28,8,14,8"/>
+            <Setter Property="FontSize" Value="16"/>
+        </Style>
+        <Style Selector="Button.nav-sub:pointerover">
+            <Setter Property="Background" Value="#202A3E"/>
+        </Style>
+        <Style Selector="Button.auth-mini">
+            <Setter Property="Background" Value="#202A3E"/>
+            <Setter Property="BorderBrush" Value="#2B3A55"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="#D6DEEB"/>
+            <Setter Property="Padding" Value="8,6"/>
+            <Setter Property="FontSize" Value="14"/>
+        </Style>
+    </Window.Styles>
+
+    <Grid RowDefinitions="58,*" Background="#D9D9D9">
+        <Border Background="#FFFFFF" BorderBrush="#D8D8D8" BorderThickness="0,0,0,1" Padding="18,0">
+            <Grid ColumnDefinitions="220,*" VerticalAlignment="Center">
+                <TextBlock Text="Лого" FontSize="20" VerticalAlignment="Center"/>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Spacing="10">
+                    <Border Width="24" Height="16" Background="#C81F2D" VerticalAlignment="Center"/>
+                    <StackPanel Spacing="1">
+                        <TextBlock Text="{Binding EmployeeName}" FontSize="13"/>
+                        <TextBlock Text="{Binding EmployeeRole}" FontSize="13" Foreground="#6B7280"/>
+                    </StackPanel>
+                    <TextBlock Text="∨" FontSize="14" Foreground="#374151" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="1" ColumnDefinitions="305,*">
+            <Border Background="#161D2D">
+                <Grid RowDefinitions="Auto,*">
+                    <!-- Шапка сайдбара: заголовок "Навигация" и burger-иконка -->
+                    <Grid ColumnDefinitions="*,56" Height="44">
+                        <TextBlock Text="Навигация" Classes="nav-group" Margin="14,10,14,0" VerticalAlignment="Center"/>
+                        <Border Grid.Column="1" Background="#181A1F">
+                            <TextBlock Text="☰" FontSize="22" Foreground="#FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </Grid>
+                    <ScrollViewer Grid.Row="1">
+                        <StackPanel Spacing="2">
+                            <!-- Основные пункты первого уровня -->
+                            <Button Classes="nav" Command="{Binding ShowDashboardCommand}" Content="⌕  Главная"/>
+                            <Button Classes="nav" Command="{Binding ShowMonitorTaCommand}" Content="▣  Монитор ТА"/>
+                            <Button Classes="nav" Content="▣  Детальные отчеты      ˅" IsEnabled="False"/>
+                            <Button Classes="nav" Content="▣  Учет ТМЦ              ˅" IsEnabled="False"/>
+                            <Button Classes="nav"
+                                    Command="{Binding ToggleAdminCommand}"
+                                    Content="{Binding AdminMenuTitle}"/>
+                            <!-- Выпадающий блок "Администрирование" -->
+                            <Border IsVisible="{Binding IsAdminExpanded}" Background="#121725" Margin="0,2,0,0" Padding="0,6,0,6">
+                                <StackPanel>
+                                    <Button Classes="nav-sub" Command="{Binding ShowMachinesCommand}" Content="Торговые автоматы"/>
+                                    <Button Classes="nav-sub" Command="{Binding ShowCompaniesCommand}" Content="Компании"/>
+                                    <Button Classes="nav-sub" Content="Пользователи" IsEnabled="False"/>
+                                    <Button Classes="nav-sub" Content="Модемы" IsEnabled="False"/>
+                                    <Button Classes="nav-sub" Content="Дополнительные" IsEnabled="False"/>
+                                </StackPanel>
+                            </Border>
+                            <StackPanel Orientation="Horizontal" Spacing="6" Margin="12,14,12,0">
+                                <Button Classes="auth-mini" Command="{Binding ShowLoginCommand}" Content="Вход"/>
+                                <Button Classes="auth-mini" Command="{Binding ShowRegistrationCommand}" Content="Регистрация"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+
+            <Grid Grid.Column="1" RowDefinitions="60,*">
+                <Border Background="#101113" Padding="12,0">
+                    <Grid ColumnDefinitions="*,Auto" VerticalAlignment="Center">
+                        <TextBlock Grid.Column="0"
+                                   Text="{Binding CompanyTitle}"
+                                   FontSize="22"
+                                   Foreground="#F3F4F6"
+                                   VerticalAlignment="Center"
+                                   Margin="14,0,0,0"/>
+                        <TextBlock Grid.Column="1"
+                                   Text="{Binding TopBarPath}"
+                                   FontSize="16"
+                                   Foreground="#C5C6CC"
+                                   VerticalAlignment="Center"
+                                   Margin="12,0,8,0"/>
+                    </Grid>
+                </Border>
+
+                <Border Grid.Row="1" Background="#D4D4D4" Padding="16">
+                    <StackPanel Spacing="10">
+                        <TextBlock Text="{Binding ContentHeader}" FontSize="22" Margin="4,2,0,6" Foreground="#202227"/>
+                        <Border Background="#FFFFFF" BorderBrush="#CFCFD1" BorderThickness="1">
+                            <Grid RowDefinitions="3,*">
+                                <Border Background="#35A8E0"/>
+                                <Border Grid.Row="1" Padding="12" Background="#FFFFFF">
+                                    <ContentControl Content="{Binding CurrentPage}" />
+                                </Border>
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Grid>
+    </Grid>
 </Window>
