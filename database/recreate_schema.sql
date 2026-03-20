@@ -7,12 +7,13 @@ DROP SCHEMA IF EXISTS automata CASCADE;
 
 SET search_path TO automata, public;
 
--- Quick verification
 SELECT 'companies' AS table_name, COUNT(*) AS total FROM companies
 UNION ALL
 SELECT 'users' AS table_name, COUNT(*) AS total FROM users
 UNION ALL
 SELECT 'vending_machines' AS table_name, COUNT(*) AS total FROM vending_machines
 UNION ALL
-SELECT 'machine_monitor_snapshots' AS table_name, COUNT(*) AS total FROM machine_monitor_snapshots
+SELECT 'machine_products' AS table_name, COUNT(*) AS total FROM machine_products
+UNION ALL
+SELECT 'sales' AS table_name, COUNT(*) AS total FROM sales
 ORDER BY table_name;
