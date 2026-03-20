@@ -1,5 +1,7 @@
 -- 001_seed_core.sql
+
 -- Стартовые данные для минимальной схемы Automata
+
 
 BEGIN;
 
@@ -50,7 +52,12 @@ INSERT INTO sales (
     (2, 1, 2, 1, 150.00, NOW() - INTERVAL '2 hours', 'Карта'),
     (3, 2, 3, 2, 160.00, NOW() - INTERVAL '6 hours', 'Наличные'),
     (4, 2, 4, 1, 210.00, NOW() - INTERVAL '1 day', 'QR')
+
 ON CONFLICT (id) DO NOTHING;
+
+-- =========================
+-- Обслуживание и мониторинг
+-- =========================
 
 INSERT INTO maintenance_records (
     id, machine_id, user_id, service_date, work_description, issues

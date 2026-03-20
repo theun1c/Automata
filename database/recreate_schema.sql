@@ -7,6 +7,7 @@ DROP SCHEMA IF EXISTS automata CASCADE;
 
 SET search_path TO automata, public;
 
+
 SELECT 'roles' AS table_name, COUNT(*) AS total FROM roles
 UNION ALL
 SELECT 'machine_statuses' AS table_name, COUNT(*) AS total FROM machine_statuses

@@ -1,10 +1,13 @@
 -- 001_initial_schema.sql
+
 -- Минимальная схема Automata (PostgreSQL)
+
 
 BEGIN;
 
 CREATE SCHEMA IF NOT EXISTS automata;
 SET search_path TO automata, public;
+
 
 CREATE TABLE IF NOT EXISTS roles (
     id BIGSERIAL PRIMARY KEY,
@@ -48,6 +51,10 @@ CREATE TABLE IF NOT EXISTS vending_machines (
     total_income NUMERIC(14, 2) NOT NULL DEFAULT 0,
     CONSTRAINT chk_vending_machines_total_income_nonnegative CHECK (total_income >= 0)
 );
+
+-- =========================
+-- Товары, остатки, продажи
+-- =========================
 
 CREATE TABLE IF NOT EXISTS products (
     id BIGSERIAL PRIMARY KEY,
