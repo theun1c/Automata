@@ -7,13 +7,20 @@ DROP SCHEMA IF EXISTS automata CASCADE;
 
 SET search_path TO automata, public;
 
-SELECT 'companies' AS table_name, COUNT(*) AS total FROM companies
+
+SELECT 'roles' AS table_name, COUNT(*) AS total FROM roles
+UNION ALL
+SELECT 'machine_statuses' AS table_name, COUNT(*) AS total FROM machine_statuses
+UNION ALL
+SELECT 'machine_models' AS table_name, COUNT(*) AS total FROM machine_models
 UNION ALL
 SELECT 'users' AS table_name, COUNT(*) AS total FROM users
 UNION ALL
 SELECT 'vending_machines' AS table_name, COUNT(*) AS total FROM vending_machines
 UNION ALL
-SELECT 'machine_products' AS table_name, COUNT(*) AS total FROM machine_products
+SELECT 'products' AS table_name, COUNT(*) AS total FROM products
 UNION ALL
 SELECT 'sales' AS table_name, COUNT(*) AS total FROM sales
+UNION ALL
+SELECT 'maintenance_records' AS table_name, COUNT(*) AS total FROM maintenance_records
 ORDER BY table_name;
