@@ -59,7 +59,7 @@
                         </Grid>
                     </Grid>
                 </Border>
-
+                
                 <Border Grid.Column="2" BorderBrush="#D3D3D3" BorderThickness="1" Background="#FFFFFF">
                     <Grid RowDefinitions="Auto,*">
                         <Border Background="#F6F6F6" BorderBrush="#DADADA" BorderThickness="0,0,0,1" Padding="10,8">
