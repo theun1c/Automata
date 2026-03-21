@@ -8,7 +8,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Automata.Application\Automata.Application.csproj" />
-      <ProjectReference Include="..\Automata.Domain\Automata.Domain.csproj" />
     </ItemGroup>
 
     <ItemGroup>

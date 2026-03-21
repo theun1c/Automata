@@ -5,8 +5,6 @@ VisualStudioVersion = 17.14.36414.22 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Automata.Desktop", "src\Automata.Desktop\Automata.Desktop.csproj", "{DC069577-4A1F-4767-9F15-563C5DA6C794}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Automata.Domain", "src\Automata.Domain\Automata.Domain.csproj", "{212028D5-1CA5-43DA-B957-A2031F39D824}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Automata.Application", "src\Automata.Application\Automata.Application.csproj", "{CD7A7B20-4F55-4EF4-AAFA-23D2F4514346}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Automata.Infrastructure", "src\Automata.Infrastructure\Automata.Infrastructure.csproj", "{D9642ED8-4AB1-47BC-B7DA-9F651B11F2FD}"
@@ -25,10 +23,6 @@ Global
 		{DC069577-4A1F-4767-9F15-563C5DA6C794}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DC069577-4A1F-4767-9F15-563C5DA6C794}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DC069577-4A1F-4767-9F15-563C5DA6C794}.Release|Any CPU.Build.0 = Release|Any CPU
-		{212028D5-1CA5-43DA-B957-A2031F39D824}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{212028D5-1CA5-43DA-B957-A2031F39D824}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{212028D5-1CA5-43DA-B957-A2031F39D824}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{212028D5-1CA5-43DA-B957-A2031F39D824}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CD7A7B20-4F55-4EF4-AAFA-23D2F4514346}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CD7A7B20-4F55-4EF4-AAFA-23D2F4514346}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CD7A7B20-4F55-4EF4-AAFA-23D2F4514346}.Release|Any CPU.ActiveCfg = Release|Any CPU
