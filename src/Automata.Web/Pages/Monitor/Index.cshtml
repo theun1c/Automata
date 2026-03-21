@@ -2,101 +2,113 @@
 @model Automata.Web.Pages.Monitor.IndexModel
 @{
     ViewData["Title"] = "Монитор ТА";
-    ViewData["TopPath"] = "Главная / Монитор ТА";
+    ViewData["TopPath"] = "Монитор ТА";
 }
 
 <section class="monitor-panel">
+    <!-- Заголовок экрана -->
     <div class="monitor-header">
         <h1>Монитор торговых автоматов</h1>
-        <div class="monitor-view-toggle">▦ ▤</div>
+        <div class="monitor-subtitle">Всего в выборке: @Model.Rows.Count</div>
     </div>
 
-    <form method="get" class="monitor-filters">
-        <div>
-            <div class="monitor-filter-title">Общее состояние</div>
-            <div class="state-dots">
-                @foreach (var option in Model.StateOptions)
-                {
-                    var dotClass = option.Value switch
+    <!-- Фильтры, поиск и действия -->
+    <form method="get" class="monitor-filters-stack">
+        <div class="monitor-filters-top">
+            <div class="monitor-filter-col">
+                <div class="monitor-filter-title">Общее состояние</div>
+                <div class="monitor-state-line">
+                    <span class="monitor-state-dot working"></span>
+                    <span class="monitor-state-dot stopped"></span>
+                    <span class="monitor-state-dot service"></span>
+                    <select name="StatusId" class="monitor-input monitor-status-select">
+                        <option value="">Все статусы</option>
+                        @foreach (var status in Model.Statuses)
+                        {
+                            if (Model.StatusId == status.Id)
+                            {
+                                <option value="@status.Id" selected>@status.Name</option>
+                            }
+                            else
+                            {
+                                <option value="@status.Id">@status.Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <div class="monitor-filter-col">
+                <div class="monitor-filter-title">Подключение</div>
+                <div class="monitor-static-box">4G / GSM / Wi-Fi / Ethernet</div>
+            </div>
+
+            <div class="monitor-filter-col">
+                <div class="monitor-filter-title">Дополнительные статусы</div>
+                <div class="monitor-static-box">Нет бумаги · Дверь · Офлайн · Норма</div>
+            </div>
+
+            <div class="monitor-filter-col">
+                <div class="monitor-filter-title">Сортировка</div>
+                <select name="SortBy" class="monitor-input">
+                    @foreach (var option in Model.SortOptions)
                     {
-                        "working" => "working",
-                        "stopped" => "stopped",
-                        _ => "service"
-                    };
-
-                    <label class="monitor-pill">
-                        <input type="checkbox" name="SelectedStates" value="@option.Value" checked="@Model.IsStateChecked(option.Value)"/>
-                        <span class="state-dot @dotClass"></span>
-                    </label>
-                }
+                        if (Model.SortBy == option.Value)
+                        {
+                            <option value="@option.Value" selected>@option.Label</option>
+                        }
+                        else
+                        {
+                            <option value="@option.Value">@option.Label</option>
+                        }
+                    }
+                </select>
             </div>
         </div>
 
-        <div>
-            <div class="monitor-filter-title">Подключение</div>
-            <div class="monitor-pill-set">
-                @foreach (var option in Model.ConnectionTypeOptions)
-                {
-                    <label class="monitor-pill">
-                        <input type="radio" name="SelectedConnectionType" value="@option.Value" checked="@Model.IsSelectedConnectionType(option.Value)"/>
-                        <span>@option.Label</span>
-                    </label>
-                }
-                <label class="monitor-pill">
-                    <input type="radio" name="SelectedConnectionType" value="" checked="@string.IsNullOrWhiteSpace(Model.SelectedConnectionType)"/>
-                    <span>Все</span>
-                </label>
-            </div>
-        </div>
-
-        <div>
-            <div class="monitor-filter-title">Дополнительные статусы</div>
-            <div class="monitor-pill-set">
-                @foreach (var option in Model.AdditionalStatusOptions)
-                {
-                    <label class="monitor-pill">
-                        <input type="checkbox" name="SelectedAdditionalStatuses" value="@option.Value" checked="@Model.IsAdditionalStatusChecked(option.Value)"/>
-                        <span>@option.Label</span>
-                    </label>
-                }
-            </div>
-        </div>
-
-        <div>
-            <div class="monitor-filter-title">Сортировка</div>
-            <select name="SortBy" class="form-select monitor-sort-select">
-                @foreach (var option in Model.SortOptions)
-                {
-                    <option value="@option.Value" selected="@(Model.SortBy == option.Value)">@option.Label</option>
-                }
-            </select>
-        </div>
-
-        <div class="monitor-actions">
-            <button type="submit" name="apply" value="true" class="monitor-btn primary">Применить</button>
+        <div class="monitor-filters-bottom">
+            <button type="submit" class="monitor-btn primary">Применить</button>
             <a asp-page="/Monitor/Index" class="monitor-btn text-decoration-none text-dark">Очистить</a>
+            <button type="submit" class="monitor-btn">Обновить</button>
+            <a asp-page="/Monitor/Index"
+               asp-page-handler="ExportCsv"
+               asp-route-Search="@Model.Search"
+               asp-route-StatusId="@Model.StatusId"
+               asp-route-SortBy="@Model.SortBy"
+               class="monitor-btn text-decoration-none text-dark">Экспорт CSV</a>
+
+            <input name="Search"
+                   value="@Model.Search"
+                   class="monitor-input monitor-search-input"
+                   placeholder="Поиск по названию автомата и локации"/>
         </div>
     </form>
 
-    <div class="monitor-summary-line">
-        Итого автоматов: <span class="accent">@Model.TotalMachines</span>.
-        Денег в автоматах: <span class="accent">@Model.TotalCash.ToString("N0") ₽</span>
+    <!-- Подсказки и сообщения -->
+    <div class="monitor-hints">
+        <div>Поиск и фильтры в стиле desktop-модуля «Монитор ТА».</div>
+        <div>Обновлено: @Model.LastUpdatedText</div>
+        @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+        {
+            <div class="monitor-error">@Model.ErrorMessage</div>
+        }
     </div>
 
     @if (!Model.HasRows)
     {
         <div class="monitor-empty-state">
-            Нет активных торговых автоматов, соответствующих заданному фильтру
+            Нет автоматов по текущему фильтру.
         </div>
     }
     else
     {
+        <!-- Основная таблица мониторинга -->
         <div class="monitor-table-wrap">
             <table class="monitor-table">
                 <thead>
                 <tr>
-                    <th>№</th>
-                    <th>ТП</th>
+                    <th>#</th>
+                    <th>Торговый автомат</th>
                     <th>Связь</th>
                     <th>Загрузка</th>
                     <th>Денежные средства</th>
@@ -109,37 +121,38 @@
                 <tbody>
                 @foreach (var row in Model.Rows)
                 {
-                    var stateClass = row.State switch
-                    {
-                        "working" => "working",
-                        "stopped" => "stopped",
-                        _ => "service"
-                    };
-
-                    <tr>
+                    <tr class="@(row.IsAttentionRequired ? "attention" : row.IsRefillRecommended ? "refill" : string.Empty)">
                         <td>@row.Number</td>
                         <td>
-                            <div><strong>@row.TradingPoint</strong></div>
-                            <div>@row.MachineName</div>
+                            <div class="machine-main">@row.MachineName</div>
+                            <div class="machine-sub">@row.Location</div>
+                            <div class="machine-model">@row.ModelDisplayName</div>
                         </td>
                         <td>
-                            <div class="monitor-status @stateClass">@row.StateLabel</div>
-                            <div>@row.ConnectionLabel</div>
+                            <div class="status-badge @row.StatusKind">@row.StatusText</div>
+                            <div>@row.ConnectionText</div>
                         </td>
                         <td>
-                            Общая: <strong>@row.TotalLoadPercent%</strong><br/>
-                            Мин.: <strong>@row.MinLoadPercent%</strong>
+                            <div>@row.LoadOverallText</div>
+                            <div class="muted">@row.LoadMinText</div>
                         </td>
                         <td>
-                            @row.Coins.ToString("N0") ₽ (монет)<br/>
-                            @row.Bills.ToString("N0") ₽ (купюр)<br/>
-                            @row.Change.ToString("N0") ₽ (сдача)<br/>
-                            <strong>@row.CashTotal.ToString("N0") ₽</strong>
+                            <div>@row.MoneyLine1</div>
+                            <div>@row.MoneyLine2</div>
+                            <div class="muted">@row.MoneyLine3</div>
                         </td>
-                        <td>@row.Events</td>
-                        <td>@row.Equipment</td>
-                        <td>@row.Information</td>
-                        <td>@row.Extra</td>
+                        <td>
+                            <div>@row.EventsLine1</div>
+                            <div class="muted">@row.EventsLine2</div>
+                        </td>
+                        <td>@row.EquipmentText</td>
+                        <td>@row.InformationText</td>
+                        <td>
+                            <div>@row.ExtraText</div>
+                            <div class="monitor-attention @(row.IsAttentionRequired ? "bad" : row.IsRefillRecommended ? "warn" : "ok")">
+                                @(row.IsAttentionRequired ? "Требуется" : row.IsRefillRecommended ? "Пополнить" : "Норма")
+                            </div>
+                        </td>
                     </tr>
                 }
                 </tbody>
@@ -147,8 +160,12 @@
         </div>
     }
 
-    <div class="monitor-foot">
-        <div>Итого автоматов: @Model.TotalMachines</div>
-        <a class="monitor-export-link" href="#">Экспорт в Excel</a>
+    <!-- Нижняя сводка -->
+    <div class="monitor-footline">
+        <span>Итого автоматов: <b>@Model.Summary.TotalMachines</b></span>
+        <span>Рабочие: <b class="ok">@Model.Summary.WorkingMachines</b></span>
+        <span>Нерабочие: <b class="bad">@Model.Summary.NotWorkingMachines</b></span>
+        <span>Требуют внимания: <b class="bad">@Model.Summary.AttentionRequiredMachines</b></span>
+        <span>Денег в автоматах: <b class="money">@Model.Summary.TotalIncome.ToString("N2") ₽</b></span>
     </div>
 </section>

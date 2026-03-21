@@ -1,5 +1,6 @@
 \set ON_ERROR_STOP on
 
+-- Полное пересоздание схемы automata
 DROP SCHEMA IF EXISTS automata CASCADE;
 
 \i database/migrations/001_initial_schema.sql
@@ -7,20 +8,29 @@ DROP SCHEMA IF EXISTS automata CASCADE;
 
 SET search_path TO automata, public;
 
-
-SELECT 'roles' AS table_name, COUNT(*) AS total FROM roles
+SELECT 'critical_value_templates' AS table_name, COUNT(*) AS total FROM critical_value_templates
 UNION ALL
-SELECT 'machine_statuses' AS table_name, COUNT(*) AS total FROM machine_statuses
+SELECT 'companies', COUNT(*) FROM companies
 UNION ALL
-SELECT 'machine_models' AS table_name, COUNT(*) AS total FROM machine_models
+SELECT 'machine_models', COUNT(*) FROM machine_models
 UNION ALL
-SELECT 'users' AS table_name, COUNT(*) AS total FROM users
+SELECT 'machine_statuses', COUNT(*) FROM machine_statuses
 UNION ALL
-SELECT 'vending_machines' AS table_name, COUNT(*) AS total FROM vending_machines
+SELECT 'maintenance_records', COUNT(*) FROM maintenance_records
 UNION ALL
-SELECT 'products' AS table_name, COUNT(*) AS total FROM products
+SELECT 'modems', COUNT(*) FROM modems
 UNION ALL
-SELECT 'sales' AS table_name, COUNT(*) AS total FROM sales
+SELECT 'notification_templates', COUNT(*) FROM notification_templates
 UNION ALL
-SELECT 'maintenance_records' AS table_name, COUNT(*) AS total FROM maintenance_records
+SELECT 'product_matrices', COUNT(*) FROM product_matrices
+UNION ALL
+SELECT 'products', COUNT(*) FROM products
+UNION ALL
+SELECT 'roles', COUNT(*) FROM roles
+UNION ALL
+SELECT 'sales', COUNT(*) FROM sales
+UNION ALL
+SELECT 'users', COUNT(*) FROM users
+UNION ALL
+SELECT 'vending_machines', COUNT(*) FROM vending_machines
 ORDER BY table_name;

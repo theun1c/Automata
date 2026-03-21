@@ -10,18 +10,51 @@
 
     <ScrollViewer>
         <StackPanel Spacing="12">
+            <!-- Заголовок dashboard и кнопка ручного обновления -->
+            <Grid ColumnDefinitions="*,Auto" VerticalAlignment="Center">
+                <StackPanel Spacing="2">
+                    <TextBlock Text="Показатели сети" FontSize="18" FontWeight="SemiBold" Foreground="#202227"/>
+                    <TextBlock Text="{Binding LastUpdatedText, StringFormat=Обновлено: {0}}" FontSize="12" Foreground="#6B7280"/>
+                </StackPanel>
+                <Button Grid.Column="1" Content="Обновить" Width="120" Height="34" Command="{Binding RefreshCommand}"/>
+            </Grid>
+
+            <!-- Секция отображения ошибок загрузки -->
+            <TextBlock Text="{Binding ErrorMessage}" Foreground="#B42318" FontSize="12"/>
+
+            <!-- Верхний ряд виджетов: эффективность, состояние сети, сводка -->
             <Grid ColumnDefinitions="1.05*,1.05*,1.2*" ColumnSpacing="12">
                 <Border BorderBrush="#D3D3D3" BorderThickness="1" Background="#FFFFFF">
                     <Grid RowDefinitions="Auto,*">
                         <Border Background="#F6F6F6" BorderBrush="#DADADA" BorderThickness="0,0,0,1" Padding="10,8">
                             <TextBlock Text="Эффективность сети" FontSize="16" FontWeight="SemiBold"/>
                         </Border>
-                        <StackPanel Grid.Row="1" Margin="10,8,10,10" Spacing="8" HorizontalAlignment="Center">
-                            <Grid Width="160" Height="96">
-                                <Border Width="140" Height="140" CornerRadius="70" BorderBrush="#0AC43B" BorderThickness="26" Background="Transparent" VerticalAlignment="Top" ClipToBounds="True"/>
+                        <StackPanel Grid.Row="1" Margin="10,12,10,10" Spacing="6" HorizontalAlignment="Center">
+                            <Grid Width="180" Height="96">
+                                <Canvas Width="180" Height="96">
+                                    <Path Data="M 28,90 A 62,62 0 0 1 152,90"
+                                          Stroke="#D1D5DB"
+                                          StrokeThickness="22"
+                                          StrokeLineCap="Round"/>
+                                </Canvas>
+                                <ItemsControl ItemsSource="{Binding EfficiencyRingSegments}" IsHitTestVisible="False">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <Canvas Width="180" Height="96"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Path Data="{Binding GeometryData}"
+                                                  Stroke="{Binding Color}"
+                                                  StrokeThickness="22"
+                                                  StrokeLineCap="Round"/>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
                             </Grid>
                             <TextBlock Text="{Binding EfficiencyText}" FontSize="24" FontWeight="Bold" Foreground="#0B9A3A" HorizontalAlignment="Center"/>
-                            <TextBlock Text="Работающих автоматов - 100%" FontSize="12" Foreground="#4B5563"/>
+                            <TextBlock Text="{Binding NetworkStateHint}" FontSize="12" Foreground="#4B5563" HorizontalAlignment="Center"/>
                         </StackPanel>
                     </Grid>
                 </Border>
@@ -31,24 +64,35 @@
                         <Border Background="#F6F6F6" BorderBrush="#DADADA" BorderThickness="0,0,0,1" Padding="10,8">
                             <TextBlock Text="Состояние сети" FontSize="16" FontWeight="SemiBold"/>
                         </Border>
-                        <Grid Grid.Row="1" Margin="8">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="180"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <Grid Width="160" Height="160" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                <Ellipse Width="132" Height="132" Stroke="#1DA0DC" StrokeThickness="20"/>
-                                <Border Width="78" Height="78" CornerRadius="39" Background="#FFFFFF" BorderBrush="#D1D5DB" BorderThickness="1">
-                                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                                        <TextBlock Text="Под вопросом" FontSize="11" HorizontalAlignment="Center"/>
-                                        <TextBlock Text="9" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center"/>
+                        <Grid Grid.Row="1" Margin="8" ColumnDefinitions="190,*" ColumnSpacing="8">
+                            <Grid Width="170" Height="170" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Ellipse Width="142" Height="142" Stroke="#D1D5DB" StrokeThickness="20"/>
+                                <ItemsControl ItemsSource="{Binding NetworkRingSegments}" IsHitTestVisible="False">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <Canvas Width="170" Height="170"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Path Data="{Binding GeometryData}"
+                                                  Stroke="{Binding Color}"
+                                                  StrokeThickness="20"
+                                                  StrokeLineCap="Round"/>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                                <Border Width="82" Height="82" CornerRadius="41" Background="#FFFFFF" BorderBrush="#D1D5DB" BorderThickness="1">
+                                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="2">
+                                        <TextBlock Text="{Binding NetworkCenterTitle}" FontSize="11" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding NetworkCenterValue}" FontSize="22" FontWeight="Bold" HorizontalAlignment="Center"/>
                                     </StackPanel>
                                 </Border>
                             </Grid>
-                            <ItemsControl Grid.Column="1" ItemsSource="{Binding NetworkStatuses}">
+                            <ItemsControl Grid.Column="1" ItemsSource="{Binding NetworkStatuses}" VerticalAlignment="Center">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Grid ColumnDefinitions="14,*,Auto" Margin="0,6,0,6" ColumnSpacing="8">
+                                        <Grid ColumnDefinitions="14,*,Auto" Margin="0,5,0,5" ColumnSpacing="8">
                                             <Border Width="10" Height="10" CornerRadius="5" Background="{Binding Color}" VerticalAlignment="Center"/>
                                             <TextBlock Grid.Column="1" Text="{Binding Title}" VerticalAlignment="Center"/>
                                             <TextBlock Grid.Column="2" Text="{Binding Count}" VerticalAlignment="Center" FontWeight="SemiBold"/>
@@ -59,16 +103,16 @@
                         </Grid>
                     </Grid>
                 </Border>
-                
+
                 <Border Grid.Column="2" BorderBrush="#D3D3D3" BorderThickness="1" Background="#FFFFFF">
                     <Grid RowDefinitions="Auto,*">
                         <Border Background="#F6F6F6" BorderBrush="#DADADA" BorderThickness="0,0,0,1" Padding="10,8">
                             <TextBlock Text="Сводка" FontSize="16" FontWeight="SemiBold"/>
                         </Border>
-                        <ItemsControl Grid.Row="1" Margin="10,8,10,10" ItemsSource="{Binding SummaryCards}">
+                        <ItemsControl Grid.Row="1" Margin="10,8,10,10" ItemsSource="{Binding SummaryRows}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Grid ColumnDefinitions="*,Auto" Margin="0,3,0,3">
+                                    <Grid ColumnDefinitions="*,Auto" Margin="0,2,0,2" ColumnSpacing="8">
                                         <TextBlock Text="{Binding Title}" FontSize="13" Foreground="#374151"/>
                                         <TextBlock Grid.Column="1" Text="{Binding Value}" FontSize="13" FontWeight="SemiBold"/>
                                     </Grid>
@@ -79,19 +123,28 @@
                 </Border>
             </Grid>
 
-            <Grid ColumnDefinitions="1.9*,1.1*" ColumnSpacing="12">
+            <!-- Нижний ряд: график динамики и оперативная лента -->
+            <Grid ColumnDefinitions="2.12*,1.18*" ColumnSpacing="12" MinHeight="430">
                 <Border BorderBrush="#D3D3D3" BorderThickness="1" Background="#FFFFFF">
                     <Grid RowDefinitions="Auto,Auto,*">
                         <Border Background="#F6F6F6" BorderBrush="#DADADA" BorderThickness="0,0,0,1" Padding="10,8">
                             <StackPanel Spacing="2">
                                 <TextBlock Text="Динамика продаж за последние 10 дней" FontSize="16" FontWeight="SemiBold"/>
-                                <TextBlock Text="Данные по продажам с 01.03.2026 по 10.03.2026" FontSize="12" Foreground="#6B7280"/>
+                                <TextBlock Text="{Binding SalesDynamicsPeriodText}" FontSize="12" Foreground="#6B7280"/>
                             </StackPanel>
                         </Border>
 
                         <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="6" Margin="10,10,10,8">
-                            <Button Content="По сумме" Width="110" Command="{Binding ShowAmountCommand}" Background="#1EA7E2" Foreground="#FFFFFF"/>
-                            <Button Content="По количеству" Width="120" Command="{Binding ShowQuantityCommand}"/>
+                            <Button Content="По сумме"
+                                    Width="110"
+                                    Command="{Binding ShowAmountCommand}"
+                                    Background="{Binding AmountModeButtonBackground}"
+                                    Foreground="{Binding AmountModeButtonForeground}"/>
+                            <Button Content="По количеству"
+                                    Width="120"
+                                    Command="{Binding ShowQuantityCommand}"
+                                    Background="{Binding QuantityModeButtonBackground}"
+                                    Foreground="{Binding QuantityModeButtonForeground}"/>
                         </StackPanel>
 
                         <Border Grid.Row="2" Margin="10,0,10,10" BorderBrush="#E2E8F0" BorderThickness="1" Padding="10">
@@ -103,8 +156,8 @@
                                 </ItemsControl.ItemsPanel>
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <StackPanel Width="56" Spacing="4" VerticalAlignment="Bottom">
-                                            <Border Height="170" Background="#F5F7FA" BorderBrush="#E5E7EB" BorderThickness="1">
+                                        <StackPanel Width="58" Spacing="4" VerticalAlignment="Bottom">
+                                            <Border Height="185" Background="#F5F7FA" BorderBrush="#E5E7EB" BorderThickness="1">
                                                 <Border Width="54"
                                                         Height="{Binding ColumnHeight}"
                                                         Background="#A8D2EA"
@@ -112,8 +165,9 @@
                                                         BorderThickness="1"
                                                         VerticalAlignment="Bottom"/>
                                             </Border>
-                                            <TextBlock Text="{Binding Day}" FontSize="11" HorizontalAlignment="Center"/>
-                                            <TextBlock Text="{Binding Value}" FontSize="11" HorizontalAlignment="Center" Foreground="#6B7280"/>
+                                            <TextBlock Text="{Binding ValueText}" FontSize="10" HorizontalAlignment="Center" Foreground="#6B7280"/>
+                                            <TextBlock Text="{Binding DayTitle}" FontSize="11" HorizontalAlignment="Center"/>
+                                            <TextBlock Text="{Binding DateTitle}" FontSize="11" HorizontalAlignment="Center" Foreground="{Binding DateForeground}"/>
                                         </StackPanel>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
@@ -122,21 +176,26 @@
                     </Grid>
                 </Border>
 
-                <Border Grid.Column="1" BorderBrush="#D3D3D3" BorderThickness="1" Background="#FFFFFF">
+                <Border Grid.Column="1" BorderBrush="#D3D3D3" BorderThickness="1" Background="#FFFFFF" MinHeight="430">
                     <Grid RowDefinitions="Auto,*">
                         <Border Background="#F6F6F6" BorderBrush="#DADADA" BorderThickness="0,0,0,1" Padding="10,8">
-                            <TextBlock Text="Новости" FontSize="16" FontWeight="SemiBold"/>
+                            <TextBlock Text="Оперативная лента" FontSize="16" FontWeight="SemiBold"/>
                         </Border>
-                        <ItemsControl Grid.Row="1" Margin="10,10,10,6" ItemsSource="{Binding NewsItems}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid ColumnDefinitions="74,*" Margin="0,0,0,10" ColumnSpacing="6">
-                                        <TextBlock Text="{Binding Date}" FontSize="12" Foreground="#4B5563"/>
-                                        <TextBlock Grid.Column="1" Text="{Binding Title}" TextWrapping="Wrap" FontSize="12"/>
-                                    </Grid>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
+                        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                            <StackPanel Margin="10,10,10,10" Spacing="6">
+                                <TextBlock Text="{Binding ActivityFeedEmptyText}" Foreground="#6B7280" FontSize="12"/>
+                                <ItemsControl ItemsSource="{Binding ActivityFeed}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid ColumnDefinitions="72,*" Margin="0,0,0,8" ColumnSpacing="6">
+                                                <TextBlock Text="{Binding DateText}" FontSize="12" Foreground="#4B5563"/>
+                                                <TextBlock Grid.Column="1" Text="{Binding Title}" TextWrapping="Wrap" FontSize="12"/>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </ScrollViewer>
                     </Grid>
                 </Border>
             </Grid>

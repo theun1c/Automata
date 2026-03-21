@@ -59,13 +59,26 @@
     </Window.Styles>
 
     <Grid RowDefinitions="58,*" Background="#D9D9D9">
+        <!-- Верхняя полоска с данными текущего пользователя -->
         <Border Background="#FFFFFF" BorderBrush="#D8D8D8" BorderThickness="0,0,0,1" Padding="18,0">
             <Grid ColumnDefinitions="220,*" VerticalAlignment="Center">
-                <TextBlock Text="Лого" FontSize="20" VerticalAlignment="Center"/>
+                <Image Source="/Assets/Logo.png"
+                       Height="34"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Center"
+                       Stretch="Uniform"/>
                 <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Spacing="10">
-                    <Border Width="24" Height="16" Background="#C81F2D" VerticalAlignment="Center"/>
+                    <!-- Российский триколор -->
+                    <Border Width="30" Height="18" BorderBrush="#94A3B8" BorderThickness="1" VerticalAlignment="Center">
+                        <Grid RowDefinitions="*,*,*">
+                            <Border Background="#FFFFFF"/>
+                            <Border Grid.Row="1" Background="#1D4ED8"/>
+                            <Border Grid.Row="2" Background="#DC2626"/>
+                        </Grid>
+                    </Border>
                     <StackPanel Spacing="1">
                         <TextBlock Text="{Binding EmployeeName}" FontSize="13"/>
+                        <TextBlock Text="{Binding EmployeeEmail}" FontSize="12" Foreground="#6B7280"/>
                         <TextBlock Text="{Binding EmployeeRole}" FontSize="13" Foreground="#6B7280"/>
                     </StackPanel>
                     <TextBlock Text="∨" FontSize="14" Foreground="#374151" VerticalAlignment="Center"/>
@@ -74,8 +87,9 @@
         </Border>
 
         <Grid Grid.Row="1" ColumnDefinitions="305,*">
+            <!-- Левая панель навигации -->
             <Border Background="#161D2D">
-                <Grid RowDefinitions="Auto,*">
+                <Grid RowDefinitions="Auto,*,Auto">
                     <!-- Шапка сайдбара: заголовок "Навигация" и burger-иконка -->
                     <Grid ColumnDefinitions="*,56" Height="44">
                         <TextBlock Text="Навигация" Classes="nav-group" Margin="14,10,14,0" VerticalAlignment="Center"/>
@@ -88,30 +102,31 @@
                             <!-- Основные пункты первого уровня -->
                             <Button Classes="nav" Command="{Binding ShowDashboardCommand}" Content="⌕  Главная"/>
                             <Button Classes="nav" Command="{Binding ShowMonitorTaCommand}" Content="▣  Монитор ТА"/>
-                            <Button Classes="nav" Content="▣  Детальные отчеты      ˅" IsEnabled="False"/>
-                            <Button Classes="nav" Content="▣  Учет ТМЦ              ˅" IsEnabled="False"/>
+                            <Button Classes="nav" Command="{Binding ShowInventoryCommand}" Content="▣  Учет ТМЦ"/>
                             <Button Classes="nav"
                                     Command="{Binding ToggleAdminCommand}"
-                                    Content="{Binding AdminMenuTitle}"/>
+                                    Content="{Binding AdminMenuTitle}"
+                                    IsVisible="{Binding CanShowAdminToggle}"/>
                             <!-- Выпадающий блок "Администрирование" -->
-                            <Border IsVisible="{Binding IsAdminExpanded}" Background="#121725" Margin="0,2,0,0" Padding="0,6,0,6">
+                            <Border IsVisible="{Binding ShowAdminSection}" Background="#121725" Margin="0,2,0,0" Padding="0,6,0,6">
                                 <StackPanel>
+                                    <Button Classes="nav-sub" Command="{Binding ShowInventoryManagementCommand}" Content="Учет ТМЦ (управление)"/>
                                     <Button Classes="nav-sub" Command="{Binding ShowMachinesCommand}" Content="Торговые автоматы"/>
+                                    <Button Classes="nav-sub" Command="{Binding ShowUsersCommand}" Content="Пользователи"/>
                                     <Button Classes="nav-sub" Command="{Binding ShowCompaniesCommand}" Content="Компании"/>
-                                    <Button Classes="nav-sub" Content="Пользователи" IsEnabled="False"/>
-                                    <Button Classes="nav-sub" Content="Модемы" IsEnabled="False"/>
-                                    <Button Classes="nav-sub" Content="Дополнительные" IsEnabled="False"/>
                                 </StackPanel>
                             </Border>
-                            <StackPanel Orientation="Horizontal" Spacing="6" Margin="12,14,12,0">
-                                <Button Classes="auth-mini" Command="{Binding ShowLoginCommand}" Content="Вход"/>
-                                <Button Classes="auth-mini" Command="{Binding ShowRegistrationCommand}" Content="Регистрация"/>
-                            </StackPanel>
                         </StackPanel>
                     </ScrollViewer>
+
+                    <!-- Фиксированный блок выхода внизу навигации -->
+                    <Border Grid.Row="2" Background="#121725" Padding="10">
+                        <Button Classes="nav" Command="{Binding SignOutCommand}" Content="⎋  Выйти"/>
+                    </Border>
                 </Grid>
             </Border>
 
+            <!-- Правая рабочая область с хедером раздела и контентом -->
             <Grid Grid.Column="1" RowDefinitions="60,*">
                 <Border Background="#101113" Padding="12,0">
                     <Grid ColumnDefinitions="*,Auto" VerticalAlignment="Center">
@@ -131,17 +146,18 @@
                 </Border>
 
                 <Border Grid.Row="1" Background="#D4D4D4" Padding="16">
-                    <StackPanel Spacing="10">
+                    <Grid RowDefinitions="Auto,*" RowSpacing="10">
                         <TextBlock Text="{Binding ContentHeader}" FontSize="22" Margin="4,2,0,6" Foreground="#202227"/>
-                        <Border Background="#FFFFFF" BorderBrush="#CFCFD1" BorderThickness="1">
+                        <Border Grid.Row="1" Background="#FFFFFF" BorderBrush="#CFCFD1" BorderThickness="1">
                             <Grid RowDefinitions="3,*">
                                 <Border Background="#35A8E0"/>
+                                <!-- Контейнер активного раздела (View подставляется через ViewLocator) -->
                                 <Border Grid.Row="1" Padding="12" Background="#FFFFFF">
                                     <ContentControl Content="{Binding CurrentPage}" />
                                 </Border>
                             </Grid>
                         </Border>
-                    </StackPanel>
+                    </Grid>
                 </Border>
             </Grid>
         </Grid>

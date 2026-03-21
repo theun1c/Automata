@@ -12,11 +12,11 @@
 <body class="portal-body">
 @{
     var currentPage = ViewContext.RouteData.Values["page"]?.ToString() ?? string.Empty;
-    var isMain = string.Equals(currentPage, "/Index", global::System.StringComparison.OrdinalIgnoreCase);
     var isMonitor = currentPage.StartsWith("/Monitor", global::System.StringComparison.OrdinalIgnoreCase);
-    var topPath = ViewData["TopPath"]?.ToString() ?? (isMonitor ? "Главная / Монитор ТА" : "Главная");
+    var topPath = ViewData["TopPath"]?.ToString() ?? "Монитор ТА";
 }
 
+<!-- Верхняя линия портала -->
 <header class="portal-topline">
     <div class="portal-logo">Лого</div>
     <div class="portal-user">
@@ -30,22 +30,18 @@
 </header>
 
 <div class="portal-shell">
+    <!-- Левая навигация: в web оставлена только вкладка мониторинга -->
     <aside class="portal-sidebar">
         <div class="portal-side-head">
             <div class="portal-side-title">Навигация</div>
             <div class="portal-side-burger">☰</div>
         </div>
         <nav class="portal-nav">
-            <a asp-page="/Index" class="portal-nav-link @(isMain ? "active" : string.Empty)">Главная</a>
             <a asp-page="/Monitor/Index" class="portal-nav-link @(isMonitor ? "active" : string.Empty)">Монитор ТА</a>
-            <span class="portal-nav-link disabled">Детальные отчеты</span>
-            <span class="portal-nav-link disabled">Учет ТМЦ</span>
-            <span class="portal-nav-group">Администрирование</span>
-            <span class="portal-nav-sub">Торговые автоматы</span>
-            <span class="portal-nav-sub">Компании</span>
         </nav>
     </aside>
 
+    <!-- Правая рабочая область -->
     <main class="portal-main">
         <div class="portal-blackbar">
             <div class="portal-company">ООО Торговые Автоматы</div>

@@ -1,0 +1,18 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:views="using:Automata.Desktop.Views"
+        x:Class="Automata.Desktop.Views.RegistrationWindow"
+        Title="Automata - Регистрация"
+        Width="900"
+        Height="760"
+        MinWidth="840"
+        MinHeight="680"
+        WindowStartupLocation="CenterOwner"
+        mc:Ignorable="d">
+
+    <Border Padding="24" Background="#FFFFFF">
+        <views:RegistrationView/>
+    </Border>
+</Window>

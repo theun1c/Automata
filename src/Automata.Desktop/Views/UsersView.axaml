@@ -1,0 +1,273 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:Automata.Desktop.ViewModels"
+             x:Class="Automata.Desktop.Views.UsersView"
+             x:DataType="vm:UsersViewModel"
+             x:CompileBindings="False"
+             mc:Ignorable="d">
+
+    <Grid RowDefinitions="Auto,Auto,Auto,*,Auto" RowSpacing="8">
+        <!-- Заголовок экрана -->
+        <StackPanel Spacing="2" Margin="2,0,2,4">
+            <TextBlock Text="Пользователи" FontSize="20" FontWeight="SemiBold" Foreground="#2A8FC7"/>
+            <TextBlock Text="{Binding RecordsCounterText, StringFormat=Всего найдено: {0}}" FontSize="12" Foreground="#4B5563"/>
+        </StackPanel>
+
+        <!-- Панель фильтров и действий -->
+        <Border Grid.Row="1" BorderBrush="#D7D7D7" BorderThickness="1" Background="#F6F6F6" Padding="10">
+            <Grid ColumnDefinitions="300,220,Auto,Auto,Auto,Auto,*" ColumnSpacing="8" VerticalAlignment="Center">
+                <TextBox Watermark="Поиск по ФИО, email, телефону"
+                         Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <ComboBox Grid.Column="1"
+                          ItemsSource="{Binding RoleFilters}"
+                          SelectedItem="{Binding SelectedRoleFilter, Mode=TwoWay}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Name}"/>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+
+                <Button Grid.Column="2"
+                        Content="+ Создать"
+                        Width="105"
+                        Command="{Binding StartCreateUserCommand}"/>
+                <Button Grid.Column="3"
+                        Content="Сохранить изменения"
+                        Width="148"
+                        Command="{Binding SaveUserCommand}"
+                        IsEnabled="{Binding CanEditSelectedUser}"/>
+                <Button Grid.Column="4"
+                        Content="Удалить"
+                        Width="90"
+                        Command="{Binding DeleteUserCommand}"/>
+                <Button Grid.Column="5"
+                        Content="Сбросить"
+                        Width="90"
+                        Command="{Binding ResetEditorCommand}"
+                        IsEnabled="{Binding CanEditSelectedUser}"/>
+
+                <StackPanel Grid.Column="6" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8" Margin="0,0,6,0">
+                    <Button Content="Обновить" Width="96" Command="{Binding RefreshUsersCommand}"/>
+                    <Button Content="Сбросить фильтры"
+                            Width="144"
+                            Padding="12,6"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            Command="{Binding ResetFiltersCommand}"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Служебные сообщения/подсказки -->
+        <StackPanel Grid.Row="2" Spacing="4">
+            <TextBlock Text="{Binding ModeHint}" Foreground="#4B5563" FontSize="12"/>
+            <TextBlock Text="{Binding SelectedUserHint}" Foreground="#4B5563" FontSize="12"/>
+            <TextBlock Text="{Binding ErrorMessage}" Foreground="#B42318" FontSize="12"/>
+            <TextBlock Text="{Binding ActionMessage}" Foreground="#2A8FC7" FontSize="12"/>
+        </StackPanel>
+
+        <!-- Основная область: список пользователей + редактор -->
+        <Grid Grid.Row="3" ColumnDefinitions="1.35*,1*" ColumnSpacing="10">
+            <Border BorderBrush="#CFCFCF" BorderThickness="1" Background="#FFFFFF">
+                <Grid RowDefinitions="Auto,*">
+                    <Border Background="#EFEFEF" BorderBrush="#D4D4D4" BorderThickness="0,0,0,1" Padding="8">
+                        <Grid ColumnDefinitions="220,120,220,170,110" ColumnSpacing="8">
+                            <TextBlock Text="ФИО" FontWeight="Bold"/>
+                            <TextBlock Grid.Column="1" Text="Роль" FontWeight="Bold"/>
+                            <TextBlock Grid.Column="2" Text="Email" FontWeight="Bold"/>
+                            <TextBlock Grid.Column="3" Text="Телефон" FontWeight="Bold"/>
+                            <TextBlock Grid.Column="4" Text="Создан" FontWeight="Bold"/>
+                        </Grid>
+                    </Border>
+
+                    <ListBox Grid.Row="1"
+                             ItemsSource="{Binding Users}"
+                             SelectedItem="{Binding SelectedUser, Mode=TwoWay}"
+                             ScrollViewer.VerticalScrollBarVisibility="Auto"
+                             ScrollViewer.HorizontalScrollBarVisibility="Auto">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border BorderBrush="#E1E1E1" BorderThickness="0,0,0,1" Padding="8">
+                                    <Grid ColumnDefinitions="220,120,220,170,110" ColumnSpacing="8">
+                                        <StackPanel Spacing="2">
+                                            <TextBlock Text="{Binding DisplayName}" TextWrapping="Wrap" FontWeight="SemiBold"/>
+                                            <TextBlock Text="Есть обслуживание" FontSize="11" Foreground="#B42318" IsVisible="{Binding HasMaintenanceRecords}"/>
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="1" Text="{Binding RoleName}" TextWrapping="Wrap"/>
+                                        <TextBlock Grid.Column="2" Text="{Binding Email}" TextWrapping="Wrap"/>
+                                        <TextBlock Grid.Column="3" Text="{Binding Phone}" TextWrapping="Wrap"/>
+                                        <TextBlock Grid.Column="4" Text="{Binding CreatedAt, StringFormat='{}{0:dd.MM.yyyy}'}"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </Border>
+
+            <Border Grid.Column="1" BorderBrush="#CFCFCF" BorderThickness="1" Background="#FFFFFF">
+                <Grid RowDefinitions="Auto,*,Auto">
+                    <Border Background="#EFEFEF" BorderBrush="#D4D4D4" BorderThickness="0,0,0,1" Padding="10">
+                        <TextBlock Text="{Binding EditorTitle}" FontSize="16" FontWeight="SemiBold"/>
+                    </Border>
+
+                    <ScrollViewer Grid.Row="1" IsVisible="{Binding CanEditSelectedUser}">
+                        <StackPanel Margin="10" Spacing="10">
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                                <StackPanel>
+                                    <TextBlock Text="Фамилия *" FontWeight="SemiBold"/>
+                                    <TextBox Text="{Binding EditForm.LastName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="Имя *" FontWeight="SemiBold"/>
+                                    <TextBox Text="{Binding EditForm.FirstName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <StackPanel>
+                                <TextBlock Text="Отчество" FontWeight="SemiBold"/>
+                                <TextBox Text="{Binding EditForm.MiddleName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            </StackPanel>
+
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                                <StackPanel>
+                                    <TextBlock Text="Email *" FontWeight="SemiBold"/>
+                                    <TextBox Text="{Binding EditForm.Email, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="Телефон" FontWeight="SemiBold"/>
+                                    <TextBox Text="{Binding EditForm.Phone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <StackPanel>
+                                <TextBlock Text="Роль *" FontWeight="SemiBold"/>
+                                <ComboBox ItemsSource="{Binding Roles}"
+                                          SelectedItem="{Binding EditForm.SelectedRole, Mode=TwoWay}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Name}"/>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                            </StackPanel>
+
+                            <Border BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="6" Padding="10" Background="#F8FAFC" IsVisible="{Binding CanChangePassword}">
+                                <StackPanel Spacing="8">
+                                    <TextBlock Text="Смена пароля" FontWeight="SemiBold"/>
+                                    <TextBox Text="{Binding PasswordForReset, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" PasswordChar="●" Watermark="Новый пароль"/>
+                                    <Button Content="Задать новый пароль"
+                                            Width="180"
+                                            HorizontalAlignment="Left"
+                                            Command="{Binding ChangePasswordCommand}"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <Grid Grid.Row="1" IsVisible="{Binding HasNoSelectedUser}">
+                        <TextBlock Text="Выберите пользователя в списке слева, чтобы редактировать данные."
+                                   Margin="12"
+                                   Foreground="#4B5563"
+                                   TextWrapping="Wrap"/>
+                    </Grid>
+
+                    <Border Grid.Row="2" Background="#EFEFEF" BorderBrush="#D4D4D4" BorderThickness="0,1,0,0" Padding="10">
+                        <TextBlock Text="{Binding IsLoading, StringFormat=Загрузка: {0}}" Foreground="#4B5563"/>
+                    </Border>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- Нижняя информационная строка -->
+        <Grid Grid.Row="4" ColumnDefinitions="*,Auto">
+            <TextBlock Text="Доступ к разделу только у администратора."
+                       Foreground="#4B5563"
+                       VerticalAlignment="Center"/>
+            <TextBlock Grid.Column="1"
+                       Text="{Binding SelectedUser.RoleName, StringFormat=Роль выбранного: {0}}"
+                       Foreground="#4B5563"
+                       VerticalAlignment="Center"/>
+        </Grid>
+
+        <!-- Модальное окно создания пользователя -->
+        <Border Grid.RowSpan="5"
+                IsVisible="{Binding IsCreateDialogOpen}"
+                Background="#70000000">
+            <Border Width="720"
+                    Padding="16"
+                    BorderBrush="#CBD5E1"
+                    BorderThickness="1"
+                    Background="#FFFFFF"
+                    CornerRadius="12"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+                <Grid RowDefinitions="Auto,*,Auto" RowSpacing="10">
+                    <TextBlock Text="Создание пользователя" FontSize="20" FontWeight="SemiBold" Foreground="#2A8FC7"/>
+
+                    <StackPanel Grid.Row="1" Spacing="10">
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                            <StackPanel>
+                                <TextBlock Text="Фамилия *" FontWeight="SemiBold"/>
+                                <TextBox Text="{Binding EditForm.LastName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="Имя *" FontWeight="SemiBold"/>
+                                <TextBox Text="{Binding EditForm.FirstName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <StackPanel>
+                            <TextBlock Text="Отчество" FontWeight="SemiBold"/>
+                            <TextBox Text="{Binding EditForm.MiddleName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                            <StackPanel>
+                                <TextBlock Text="Email *" FontWeight="SemiBold"/>
+                                <TextBox Text="{Binding EditForm.Email, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="Телефон" FontWeight="SemiBold"/>
+                                <TextBox Text="{Binding EditForm.Phone, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                            <StackPanel>
+                                <TextBlock Text="Роль *" FontWeight="SemiBold"/>
+                                <ComboBox ItemsSource="{Binding Roles}"
+                                          SelectedItem="{Binding EditForm.SelectedRole, Mode=TwoWay}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Name}"/>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="Стартовый пароль *" FontWeight="SemiBold"/>
+                                <TextBox Text="{Binding CreatePassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                         PasswordChar="●"
+                                         Watermark="Минимум 8 символов"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <TextBlock Text="Пароль не отображается из БД и сохраняется только в виде хеша."
+                                   Foreground="#4B5563"
+                                   FontSize="12"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+                        <Button Content="Создать" Width="120" Command="{Binding SaveUserCommand}"/>
+                        <Button Content="Отмена" Width="120" Command="{Binding CloseCreateDialogCommand}"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Border>
+    </Grid>
+</UserControl>

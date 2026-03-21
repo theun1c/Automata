@@ -177,10 +177,11 @@ body.portal-body {
 }
 
 .monitor-header {
+  padding: 12px 14px 8px;
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 12px 14px 6px;
+  align-items: flex-end;
+  gap: 12px;
 }
 
 .monitor-header h1 {
@@ -189,18 +190,27 @@ body.portal-body {
   color: #2a8fc7;
 }
 
-.monitor-view-toggle {
-  color: #1d1d1d;
-  font-size: 22px;
+.monitor-subtitle {
+  color: #4b5563;
+  font-size: 13px;
 }
 
-.monitor-filters {
-  padding: 8px 14px 14px;
+.monitor-filters-stack {
+  padding: 8px 14px 12px;
   border-bottom: 1px solid #cfcfcf;
   display: grid;
-  grid-template-columns: 1.1fr 1fr 1.25fr 1fr;
+  gap: 8px;
+}
+
+.monitor-filters-top {
+  display: grid;
+  grid-template-columns: 1.2fr 1.2fr 1.4fr 1.1fr;
   gap: 10px;
-  align-items: end;
+  align-items: start;
+}
+
+.monitor-filter-col {
+  min-width: 160px;
 }
 
 .monitor-filter-title {
@@ -209,55 +219,72 @@ body.portal-body {
   margin-bottom: 4px;
 }
 
-.state-dots {
+.monitor-input {
+  width: 100%;
+  box-sizing: border-box;
+  height: 32px;
+  border: 1px solid #c7cdd6;
+  background: #ffffff;
+  border-radius: 4px;
+  padding: 6px 8px;
+  font-size: 13px;
+  color: #111827;
+}
+
+.monitor-status-select {
+  width: 170px;
+}
+
+.monitor-state-line {
   display: flex;
-  gap: 10px;
   align-items: center;
+  gap: 8px;
 }
 
-.state-dot {
-  width: 18px;
-  height: 18px;
+.monitor-state-dot {
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
-  border: 1px solid #b7b7b7;
-  display: inline-block;
+  border: 1px solid #c7cdd6;
 }
 
-.state-dot.working {
+.monitor-state-dot.working {
   background: #26c62f;
 }
 
-.state-dot.stopped {
+.monitor-state-dot.stopped {
   background: #e64141;
 }
 
-.state-dot.service {
+.monitor-state-dot.service {
   background: #2a9fdb;
 }
 
-.monitor-pill-set {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-
-.monitor-pill {
+.monitor-static-box {
+  height: 32px;
   border: 1px solid #c7cdd6;
   background: #ffffff;
-  border-radius: 3px;
-  padding: 4px 7px;
+  border-radius: 4px;
+  padding: 6px 8px;
   font-size: 12px;
   color: #48566a;
-}
-
-.monitor-pill input {
-  margin-right: 4px;
-}
-
-.monitor-actions {
-  grid-column: 1 / 3;
   display: flex;
+  align-items: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.monitor-filters-bottom {
+  display: flex;
+  align-items: center;
   gap: 8px;
+}
+
+.monitor-search-input {
+  margin-left: auto;
+  min-width: 320px;
+  max-width: 560px;
 }
 
 .monitor-btn {
@@ -265,6 +292,11 @@ body.portal-body {
   background: #ffffff;
   border-radius: 4px;
   padding: 6px 14px;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
 }
 
 .monitor-btn.primary {
@@ -273,22 +305,23 @@ body.portal-body {
   border-color: #2b97ce;
 }
 
-.monitor-sort-select {
-  width: 100%;
+.monitor-hints {
+  padding: 8px 12px 10px;
+  color: #4b5563;
+  font-size: 12px;
+  display: grid;
+  gap: 3px;
+}
+
+.monitor-error {
+  color: #b42318;
 }
 
 .monitor-table-wrap {
-  padding: 10px 12px 12px;
-}
-
-.monitor-summary-line {
-  padding: 0 12px 10px;
-  font-size: 16px;
-  font-weight: 600;
-}
-
-.monitor-summary-line .accent {
-  color: #2c92ca;
+  padding: 0 12px 12px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
 }
 
 .monitor-empty-state {
@@ -299,7 +332,8 @@ body.portal-body {
 }
 
 .monitor-table {
-  width: 100%;
+  width: 1360px;
+  min-width: 1360px;
   border-collapse: collapse;
   background: #ffffff;
 }
@@ -310,6 +344,7 @@ body.portal-body {
   padding: 7px 8px;
   vertical-align: top;
   font-size: 13px;
+  white-space: nowrap;
 }
 
 .monitor-table th {
@@ -317,39 +352,95 @@ body.portal-body {
   font-weight: 600;
 }
 
-.monitor-status {
+.monitor-table tr.attention {
+  background: #fff8f8;
+}
+
+.monitor-table tr.refill {
+  background: #fffdf5;
+}
+
+.machine-main {
+  font-weight: 600;
+  white-space: normal;
+}
+
+.machine-sub {
+  font-size: 12px;
+  color: #4b5563;
+  white-space: normal;
+}
+
+.machine-model {
+  font-size: 11px;
+  color: #6b7280;
+  white-space: normal;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.status-badge.working {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status-badge.stopped {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.status-badge.service {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.muted {
+  color: #6b7280;
+}
+
+.monitor-attention {
   font-weight: 600;
 }
 
-.monitor-status.working {
+.monitor-attention.ok {
   color: #078346;
 }
 
-.monitor-status.stopped {
+.monitor-attention.warn {
+  color: #b45309;
+}
+
+.monitor-attention.bad {
   color: #b91c1c;
 }
 
-.monitor-status.service {
-  color: #2563eb;
-}
-
-.monitor-foot {
+.monitor-footline {
+  padding: 0 12px 12px;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 12px 12px;
-  color: #1f2937;
-  font-size: 15px;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 13px;
+  color: #111827;
 }
 
-.monitor-export-link {
-  color: #278dc5;
-  font-weight: 600;
-  text-decoration: none;
+.monitor-footline .ok {
+  color: #166534;
 }
 
-.monitor-export-link:hover {
-  text-decoration: underline;
+.monitor-footline .bad {
+  color: #b91c1c;
+}
+
+.monitor-footline .money {
+  color: #2a8fc7;
 }
 
 @media (max-width: 1300px) {
@@ -365,11 +456,42 @@ body.portal-body {
     font-size: 21px;
   }
 
-  .monitor-filters {
+  .monitor-filters-top {
     grid-template-columns: 1fr 1fr;
   }
 
-  .monitor-actions {
-    grid-column: auto;
+  .monitor-filters-bottom {
+    flex-wrap: wrap;
+  }
+
+  .monitor-search-input {
+    margin-left: 0;
+    min-width: 280px;
+    flex: 1;
+  }
+}
+
+@media (max-width: 900px) {
+  .portal-sidebar {
+    width: 210px;
+  }
+
+  .monitor-filters-top {
+    grid-template-columns: 1fr;
+  }
+
+  .monitor-filters-bottom {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .monitor-search-input {
+    grid-column: 1 / -1;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .monitor-btn {
+    width: 100%;
   }
 }

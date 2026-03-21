@@ -1,0 +1,83 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:Automata.Desktop.ViewModels"
+        x:Class="Automata.Desktop.Views.ProductFormWindow"
+        x:DataType="vm:InventoryViewModel"
+        x:CompileBindings="False"
+        Width="560"
+        Height="660"
+        MinWidth="520"
+        MinHeight="620"
+        CanResize="True"
+        WindowStartupLocation="CenterOwner"
+        Title="Товар">
+
+    <Border Background="#F5F5F5" BorderBrush="#D0D0D0" BorderThickness="1">
+        <Grid RowDefinitions="Auto,*,Auto">
+            <Border BorderBrush="#2AA4DE" BorderThickness="0,3,0,1" Background="#F7F7F7" Padding="12,10">
+                <TextBlock Text="{Binding EditorTitle}" FontSize="20" FontWeight="SemiBold" Foreground="#2A8FC7"/>
+            </Border>
+
+            <ScrollViewer Grid.Row="1" Margin="10,10,10,0">
+                <StackPanel Spacing="10">
+                    <StackPanel Spacing="2">
+                        <TextBlock Text="Автомат *"/>
+                        <ComboBox ItemsSource="{Binding EditMachines}"
+                                  SelectedItem="{Binding EditForm.SelectedMachine, Mode=TwoWay}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Name}"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </StackPanel>
+
+                    <StackPanel Spacing="2">
+                        <TextBlock Text="Название *"/>
+                        <TextBox Text="{Binding EditForm.Name, Mode=TwoWay}"/>
+                    </StackPanel>
+
+                    <StackPanel Spacing="2">
+                        <TextBlock Text="Описание"/>
+                        <TextBox Text="{Binding EditForm.Description, Mode=TwoWay}" AcceptsReturn="True" Height="96" TextWrapping="Wrap"/>
+                    </StackPanel>
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <StackPanel Spacing="2">
+                            <TextBlock Text="Цена *"/>
+                            <NumericUpDown Value="{Binding EditForm.Price, Mode=TwoWay}" Minimum="0" Increment="1" FormatString="N2"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Spacing="2">
+                            <TextBlock Text="Количество *"/>
+                            <NumericUpDown Value="{Binding EditForm.Quantity, Mode=TwoWay}" Minimum="0" Increment="1"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <StackPanel Spacing="2">
+                            <TextBlock Text="Мин. остаток *"/>
+                            <NumericUpDown Value="{Binding EditForm.MinStock, Mode=TwoWay}" Minimum="0" Increment="1"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Spacing="2">
+                            <TextBlock Text="Ср. продажи *"/>
+                            <NumericUpDown Value="{Binding EditForm.AvgDailySales, Mode=TwoWay}" Minimum="0" Increment="0.1" FormatString="N2"/>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </ScrollViewer>
+
+            <Border Grid.Row="2" Background="#EFEFEF" BorderBrush="#D3D3D3" BorderThickness="0,1,0,0" Padding="10">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <Button Content="Сохранить"
+                            Width="120"
+                            Command="{Binding SaveProductCommand}"
+                            Background="#2E90C9"
+                            Foreground="#FFFFFF"/>
+                    <Button Content="Отмена" Width="120" Command="{Binding CancelEditProductFormCommand}"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Border>
+</Window>
