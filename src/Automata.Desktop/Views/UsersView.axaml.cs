@@ -2,9 +2,9 @@ using Avalonia.Controls;
 
 namespace Automata.Desktop.Views;
 
-public partial class MachinesView : UserControl
+public partial class UsersView : UserControl
 {
-    public MachinesView()
+    public UsersView()
     {
         InitializeComponent();
     }

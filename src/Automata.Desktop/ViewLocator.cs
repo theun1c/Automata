@@ -5,13 +5,20 @@ using Avalonia.Controls.Templates;
 
 namespace Automata.Desktop
 {
+    /// <summary>
+    /// Простейший локатор View по соглашению имён:
+    /// *ViewModel -> *View.
+    /// Нужен, чтобы MainWindow мог подставлять экран через ContentControl.
+    /// </summary>
     public class ViewLocator : IDataTemplate
     {
 
         public Control? Build(object? param)
         {
             if (param is null)
+            {
                 return null;
+            }
 
             var name = param.GetType().FullName!.Replace("ViewModel", "View", StringComparison.Ordinal);
             var type = Type.GetType(name);

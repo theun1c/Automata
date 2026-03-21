@@ -1,0 +1,154 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:Automata.Desktop.ViewModels"
+             x:Class="Automata.Desktop.Views.InventoryView"
+             x:DataType="vm:InventoryViewModel"
+             x:CompileBindings="False"
+             x:Name="Root"
+             mc:Ignorable="d">
+
+    <Grid RowDefinitions="Auto,Auto,Auto,*,Auto" RowSpacing="8">
+        <!-- Заголовок раздела -->
+        <StackPanel Spacing="2" Margin="2,0,2,4">
+            <TextBlock Text="Учет ТМЦ" FontSize="20" FontWeight="SemiBold" Foreground="#2A8FC7"/>
+            <TextBlock Text="{Binding RecordsCounterText, StringFormat=Всего найдено: {0}}" FontSize="12" Foreground="#4B5563"/>
+        </StackPanel>
+
+        <!-- Панель фильтров и действий -->
+        <Border Grid.Row="1" BorderBrush="#D7D7D7" BorderThickness="1" Background="#F6F6F6" Padding="10">
+            <Grid ColumnDefinitions="320,240,Auto,Auto,Auto,*" ColumnSpacing="8" VerticalAlignment="Center">
+                <TextBox Watermark="Поиск по названию и описанию"
+                         Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <ComboBox Grid.Column="1"
+                          ItemsSource="{Binding Machines}"
+                          SelectedItem="{Binding SelectedMachineFilter, Mode=TwoWay}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Name}"/>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+
+                <Button Grid.Column="2"
+                        Content="+ Добавить"
+                        Command="{Binding OpenCreateProductFormCommand}"
+                        Width="106"
+                        IsVisible="{Binding CanManage}"/>
+                <Button Grid.Column="3"
+                        Content="Редактировать"
+                        Command="{Binding OpenEditProductFormCommand}"
+                        Width="110"
+                        IsVisible="{Binding CanManage}"/>
+                <Button Grid.Column="4"
+                        Content="Удалить"
+                        Command="{Binding AskDeleteProductCommand}"
+                        Width="90"
+                        IsVisible="{Binding CanManage}"/>
+
+                <Button Grid.Column="5"
+                        Content="Сбросить фильтры"
+                        Command="{Binding ResetFiltersCommand}"
+                        Width="144"
+                        Padding="12,6"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        HorizontalAlignment="Right"
+                        Margin="0,0,6,0"/>
+            </Grid>
+        </Border>
+
+        <!-- Служебные сообщения -->
+        <StackPanel Grid.Row="2" Spacing="4">
+            <TextBlock Text="{Binding ModeHint}"
+                       Foreground="#4B5563"
+                       FontSize="12"/>
+            <TextBlock Text="Фильтры применяются автоматически"
+                       Foreground="#4B5563"
+                       FontSize="12"/>
+            <TextBlock Text="{Binding ErrorMessage}" Foreground="#B42318" FontSize="12"/>
+            <TextBlock Text="{Binding ActionMessage}" Foreground="#2A8FC7" FontSize="12"/>
+        </StackPanel>
+
+        <!-- Таблица товаров -->
+        <Border Grid.Row="3" BorderBrush="#CFCFCF" BorderThickness="1" Background="#FFFFFF">
+            <Grid RowDefinitions="Auto,*">
+                <Border Background="#EFEFEF" BorderBrush="#D4D4D4" BorderThickness="0,0,0,1" Padding="8">
+                    <Grid ColumnDefinitions="190,180,95,95,95,110,*" ColumnSpacing="8">
+                        <TextBlock Text="Товар" FontWeight="Bold"/>
+                        <TextBlock Grid.Column="1" Text="Автомат" FontWeight="Bold"/>
+                        <TextBlock Grid.Column="2" Text="Цена" FontWeight="Bold"/>
+                        <TextBlock Grid.Column="3" Text="Остаток" FontWeight="Bold"/>
+                        <TextBlock Grid.Column="4" Text="Мин." FontWeight="Bold"/>
+                        <TextBlock Grid.Column="5" Text="Ср. продажи" FontWeight="Bold"/>
+                        <TextBlock Grid.Column="6" Text="Описание" FontWeight="Bold"/>
+                    </Grid>
+                </Border>
+
+                <ListBox Grid.Row="1"
+                         ItemsSource="{Binding Products}"
+                         SelectedItem="{Binding SelectedProduct, Mode=TwoWay}"
+                         ScrollViewer.VerticalScrollBarVisibility="Auto"
+                         ScrollViewer.HorizontalScrollBarVisibility="Auto">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Border BorderBrush="#E1E1E1" BorderThickness="0,0,0,1" Padding="8">
+                                <Grid>
+                                    <Border Background="#FFFFFF"/>
+                                    <Border Background="#FFF4E8" IsVisible="{Binding IsLowStock}"/>
+                                    <Grid ColumnDefinitions="190,180,95,95,95,110,*" ColumnSpacing="8">
+                                        <StackPanel Spacing="2">
+                                            <TextBlock Text="{Binding Name}" TextWrapping="Wrap" FontWeight="SemiBold"/>
+                                            <TextBlock Text="Низкий остаток" Foreground="#B42318" FontSize="11" IsVisible="{Binding IsLowStock}"/>
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="1" Text="{Binding MachineName}" TextWrapping="Wrap"/>
+                                        <TextBlock Grid.Column="2" Text="{Binding Price, StringFormat='{}{0:N2} ₽'}"/>
+                                        <TextBlock Grid.Column="3" Text="{Binding Quantity}"/>
+                                        <TextBlock Grid.Column="4" Text="{Binding MinStock}"/>
+                                        <TextBlock Grid.Column="5" Text="{Binding AvgDailySales, StringFormat='{}{0:N2}'}"/>
+                                        <TextBlock Grid.Column="6" Text="{Binding Description}" TextWrapping="Wrap"/>
+                                    </Grid>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
+        </Border>
+
+        <!-- Нижний статус выбранной строки -->
+        <Grid Grid.Row="4" ColumnDefinitions="*,Auto">
+            <TextBlock Text="{Binding SelectedProduct.Name, StringFormat=Выбран товар: {0}}"
+                       Foreground="#4B5563"
+                       VerticalAlignment="Center"/>
+            <TextBlock Grid.Column="1"
+                       Text="{Binding IsLoading, StringFormat=Загрузка: {0}}"
+                       Foreground="#4B5563"
+                       VerticalAlignment="Center"/>
+        </Grid>
+
+        <!-- Модальное окно подтверждения удаления -->
+        <Border Grid.RowSpan="5"
+                Background="#70000000"
+                IsVisible="{Binding IsDeleteConfirmOpen}">
+            <Border Width="430"
+                    Padding="16"
+                    BorderBrush="#D0D0D0"
+                    BorderThickness="1"
+                    Background="#FFFFFF"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+                <StackPanel Spacing="10">
+                    <TextBlock Text="Подтверждение удаления" FontSize="18" FontWeight="SemiBold"/>
+                    <TextBlock Text="{Binding SelectedProduct.Name, StringFormat=Удалить товар «{0}»?}" TextWrapping="Wrap"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+                        <Button Content="Удалить" Width="110" Command="{Binding ConfirmDeleteProductCommand}"/>
+                        <Button Content="Отмена" Width="110" Command="{Binding CancelDeleteProductCommand}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Border>
+    </Grid>
+</UserControl>

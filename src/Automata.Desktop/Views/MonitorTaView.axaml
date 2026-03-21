@@ -8,50 +8,109 @@
              x:CompileBindings="False"
              mc:Ignorable="d">
 
-    <Grid RowDefinitions="Auto,Auto,*,Auto">
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
+    <Grid RowDefinitions="Auto,Auto,Auto,*,Auto" RowSpacing="8">
+        <!-- Заголовок экрана мониторинга -->
+        <StackPanel Spacing="2" Margin="2,0,2,4">
             <TextBlock Text="Монитор торговых автоматов" FontSize="20" FontWeight="SemiBold" Foreground="#2A8FC7"/>
-            <Grid Grid.Row="1" Margin="0,10,0,0" ColumnDefinitions="1.3*,1.2*,1.5*,1.2*" ColumnSpacing="10">
-                <StackPanel>
-                    <TextBlock Text="Общее состояние" FontSize="12"/>
-                    <WrapPanel Margin="0,4,0,0">
-                        <Border Width="14" Height="14" CornerRadius="7" Background="#26C62F" Margin="0,0,8,0"/>
-                        <Border Width="14" Height="14" CornerRadius="7" Background="#E64141" Margin="0,0,8,0"/>
-                        <Border Width="14" Height="14" CornerRadius="7" Background="#2A9FDB"/>
-                    </WrapPanel>
-                </StackPanel>
-                <StackPanel Grid.Column="1">
-                    <TextBlock Text="Подключение" FontSize="12"/>
-                    <TextBox Margin="0,4,0,0" Text="4G / GSM / Wi-Fi / Ethernet"/>
-                </StackPanel>
-                <StackPanel Grid.Column="2">
-                    <TextBlock Text="Дополнительные статусы" FontSize="12"/>
-                    <TextBox Margin="0,4,0,0" Text="Бумага, дверь, офлайн, норма"/>
-                </StackPanel>
-                <StackPanel Grid.Column="3">
-                    <TextBlock Text="Сортировка" FontSize="12"/>
-                    <ComboBox Margin="0,4,0,0" SelectedIndex="0">
-                        <ComboBoxItem Content="По состоянию ТА"/>
-                        <ComboBoxItem Content="По названию ТА"/>
-                        <ComboBoxItem Content="По времени пинга"/>
-                    </ComboBox>
-                </StackPanel>
-            </Grid>
-        </Grid>
-
-        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,10,0,8" Spacing="8">
-            <Button Content="Применить" Background="#2B97CE" Foreground="#FFFFFF" Width="110"/>
-            <Button Content="Очистить" Width="96"/>
+            <TextBlock Text="{Binding RecordsCounterText, StringFormat=Всего в выборке: {0}}" FontSize="12" Foreground="#4B5563"/>
         </StackPanel>
 
-        <Border Grid.Row="2" BorderBrush="#BFC5CC" BorderThickness="1" Background="#FFFFFF">
-            <Grid RowDefinitions="Auto,*">
+        <!-- Панель фильтров, сортировки и управляющих действий -->
+        <Border Grid.Row="1" BorderBrush="#D7D7D7" BorderThickness="1" Background="#F6F6F6" Padding="10">
+            <StackPanel Spacing="8">
+                <Grid ColumnDefinitions="1.2*,1.25*,1.45*,1.1*" ColumnSpacing="10">
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="Общее состояние" FontSize="12" Foreground="#374151"/>
+                        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                            <Border Width="14" Height="14" CornerRadius="7" Background="#26C62F"/>
+                            <Border Width="14" Height="14" CornerRadius="7" Background="#E64141"/>
+                            <Border Width="14" Height="14" CornerRadius="7" Background="#2A9FDB"/>
+                            <ComboBox Width="175"
+                                      ItemsSource="{Binding Statuses}"
+                                      SelectedItem="{Binding SelectedStatus, Mode=TwoWay}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Name}"/>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" Spacing="4">
+                        <TextBlock Text="Подключение" FontSize="12" Foreground="#374151"/>
+                        <Border BorderBrush="#D1D5DB" BorderThickness="1" Background="#FFFFFF" Padding="8,6">
+                            <TextBlock Text="4G / GSM / Wi-Fi / Ethernet" Foreground="#4B5563"/>
+                        </Border>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2" Spacing="4">
+                        <TextBlock Text="Дополнительные статусы" FontSize="12" Foreground="#374151"/>
+                        <Border BorderBrush="#D1D5DB" BorderThickness="1" Background="#FFFFFF" Padding="8,6">
+                            <TextBlock Text="Нет бумаги · Дверь · Офлайн · Норма" Foreground="#4B5563"/>
+                        </Border>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="3" Spacing="4">
+                        <TextBlock Text="Сортировка" FontSize="12" Foreground="#374151"/>
+                        <ComboBox ItemsSource="{Binding SortOptions}"
+                                  SelectedItem="{Binding SelectedSort, Mode=TwoWay}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Name}"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </StackPanel>
+                </Grid>
+
+                <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,*,Auto" ColumnSpacing="8" VerticalAlignment="Center">
+                    <Button Grid.Column="0"
+                            Content="Применить"
+                            Width="100"
+                            Background="#2B97CE"
+                            Foreground="#FFFFFF"
+                            Command="{Binding ApplyFilterCommand}"/>
+                    <Button Grid.Column="1"
+                            Content="Очистить"
+                            Width="96"
+                            Command="{Binding ResetFilterCommand}"/>
+                    <Button Grid.Column="2"
+                            Content="Обновить"
+                            Width="96"
+                            Command="{Binding RefreshCommand}"/>
+                    <Button Grid.Column="3"
+                            Content="Экспорт CSV"
+                            Width="116"
+                            Command="{Binding ExportCsvCommand}"/>
+
+                    <TextBox Grid.Column="4"
+                             Watermark="Поиск по названию автомата и локации"
+                             Text="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <TextBlock Grid.Column="5"
+                               Text="{Binding IsLoading, StringFormat=Загрузка: {0}}"
+                               VerticalAlignment="Center"
+                               Foreground="#4B5563"
+                               FontSize="12"/>
+                </Grid>
+            </StackPanel>
+        </Border>
+
+        <!-- Служебные сообщения: подсказка, ошибка, результат действия -->
+        <StackPanel Grid.Row="2" Spacing="4">
+            <TextBlock Text="Фильтры и поиск работают в стиле экрана «Монитор ТА». Обновление выполняется автоматически."
+                       Foreground="#4B5563"
+                       FontSize="12"/>
+            <TextBlock Text="{Binding ErrorMessage}" Foreground="#B42318" FontSize="12"/>
+            <TextBlock Text="{Binding ActionMessage}" Foreground="#2A8FC7" FontSize="12"/>
+        </StackPanel>
+
+        <!-- Основная таблица карточек автоматов -->
+        <Border Grid.Row="3" BorderBrush="#CFCFCF" BorderThickness="1" Background="#FFFFFF">
+            <Grid RowDefinitions="Auto,*,Auto">
                 <Border Background="#ECEFF3" BorderBrush="#BFC5CC" BorderThickness="0,0,0,1" Padding="6">
-                    <Grid ColumnDefinitions="44,220,120,140,190,160,170,140,*" ColumnSpacing="8">
+                    <Grid ColumnDefinitions="40,250,120,130,190,150,160,130,80" ColumnSpacing="8">
                         <TextBlock Text="#" FontWeight="SemiBold"/>
                         <TextBlock Grid.Column="1" Text="Торговый автомат" FontWeight="SemiBold"/>
                         <TextBlock Grid.Column="2" Text="Связь" FontWeight="SemiBold"/>
@@ -64,33 +123,98 @@
                     </Grid>
                 </Border>
 
-                <ScrollViewer Grid.Row="1">
-                    <ItemsControl ItemsSource="{Binding Rows}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Border Padding="6" BorderBrush="#D5D9DF" BorderThickness="0,0,0,1">
-                                    <Grid ColumnDefinitions="44,220,120,140,190,160,170,140,*" ColumnSpacing="8">
-                                        <TextBlock Text="{Binding Number}"/>
-                                        <TextBlock Grid.Column="1" Text="{Binding TradingPoint}" TextWrapping="Wrap"/>
-                                        <TextBlock Grid.Column="2" Text="{Binding Connection}" TextWrapping="Wrap"/>
-                                        <TextBlock Grid.Column="3" Text="{Binding Load}" TextWrapping="Wrap"/>
-                                        <TextBlock Grid.Column="4" Text="{Binding Cash}" TextWrapping="Wrap"/>
-                                        <TextBlock Grid.Column="5" Text="{Binding Events}" TextWrapping="Wrap"/>
-                                        <TextBlock Grid.Column="6" Text="{Binding Equipment}" TextWrapping="Wrap"/>
-                                        <TextBlock Grid.Column="7" Text="{Binding Information}" TextWrapping="Wrap"/>
-                                        <TextBlock Grid.Column="8" Text="{Binding Extra}" TextWrapping="Wrap"/>
-                                    </Grid>
-                                </Border>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </ScrollViewer>
+                <ListBox Grid.Row="1"
+                         ItemsSource="{Binding Rows}"
+                         SelectedItem="{Binding SelectedMachine, Mode=TwoWay}"
+                         Background="Transparent"
+                         BorderThickness="0"
+                         ScrollViewer.VerticalScrollBarVisibility="Auto"
+                         ScrollViewer.HorizontalScrollBarVisibility="Auto">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Border Background="{Binding RowBackground}" BorderBrush="#D5D9DF" BorderThickness="0,0,0,1" Padding="6">
+                                <Grid ColumnDefinitions="40,250,120,130,190,150,160,130,80" ColumnSpacing="8">
+                                    <TextBlock Text="{Binding Number}" VerticalAlignment="Top"/>
+
+                                    <StackPanel Grid.Column="1" Spacing="2">
+                                        <TextBlock Text="{Binding MachineName}" FontWeight="SemiBold" TextWrapping="Wrap"/>
+                                        <TextBlock Text="{Binding Location}" Foreground="#4B5563" FontSize="12" TextWrapping="Wrap"/>
+                                        <TextBlock Text="{Binding ModelDisplayName}" Foreground="#6B7280" FontSize="11" TextWrapping="Wrap"/>
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Column="2" Spacing="4">
+                                        <Border Background="{Binding StatusBadgeBackground}" CornerRadius="3" Padding="6,2">
+                                            <TextBlock Text="{Binding StatusText}" Foreground="{Binding StatusBadgeForeground}" FontSize="11" FontWeight="SemiBold"/>
+                                        </Border>
+                                        <TextBlock Text="{Binding ConnectionText}" TextWrapping="Wrap"/>
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Column="3" Spacing="2">
+                                        <TextBlock Text="{Binding LoadOverallText}"/>
+                                        <TextBlock Text="{Binding LoadMinText}" Foreground="#6B7280"/>
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Column="4" Spacing="2">
+                                        <TextBlock Text="{Binding MoneyLine1}"/>
+                                        <TextBlock Text="{Binding MoneyLine2}"/>
+                                        <TextBlock Text="{Binding MoneyLine3}" Foreground="#6B7280"/>
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Column="5" Spacing="2">
+                                        <TextBlock Text="{Binding EventsLine1}" TextWrapping="Wrap"/>
+                                        <TextBlock Text="{Binding EventsLine2}" Foreground="#6B7280" TextWrapping="Wrap"/>
+                                    </StackPanel>
+
+                                    <TextBlock Grid.Column="6" Text="{Binding EquipmentText}" TextWrapping="Wrap"/>
+                                    <TextBlock Grid.Column="7" Text="{Binding InformationText}" TextWrapping="Wrap"/>
+
+                                    <StackPanel Grid.Column="8" Spacing="2">
+                                        <TextBlock Text="{Binding ExtraText}" TextWrapping="Wrap"/>
+                                        <TextBlock Text="{Binding AttentionText}" Foreground="{Binding AttentionForeground}" FontWeight="SemiBold"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+
+                <TextBlock Grid.Row="2"
+                           Text="Нет автоматов по текущему фильтру."
+                           Foreground="#6B7280"
+                           Margin="8,6,8,8"
+                           IsVisible="{Binding HasNoRows}"/>
             </Grid>
         </Border>
 
-        <Grid Grid.Row="3" Margin="0,8,0,0" ColumnDefinitions="*,Auto">
-            <TextBlock Text="{Binding TotalMachines, StringFormat=Итого автоматов: {0}}" FontWeight="SemiBold"/>
-            <TextBlock Grid.Column="1" Text="{Binding TotalCash, StringFormat=Денег в автоматах: {0}}" FontWeight="SemiBold" Foreground="#2A8FC7"/>
+        <!-- Нижняя строка итоговых показателей -->
+        <Grid Grid.Row="4" ColumnDefinitions="*,Auto" ColumnSpacing="12">
+            <TextBlock Text="{Binding TotalMachines, StringFormat=Итого автоматов: {0}}"
+                       VerticalAlignment="Center"
+                       Foreground="#111827"
+                       FontWeight="SemiBold"/>
+
+            <StackPanel Grid.Column="1" HorizontalAlignment="Right" Spacing="2">
+                <TextBlock Text="{Binding TotalIncomeText, StringFormat=Денег в автоматах: {0}}"
+                           Foreground="#2A8FC7"
+                           FontWeight="SemiBold"
+                           HorizontalAlignment="Right"/>
+                <TextBlock Text="{Binding WorkingMachines, StringFormat=Рабочих: {0}}"
+                           Foreground="#16A34A"
+                           FontSize="12"
+                           HorizontalAlignment="Right"/>
+                <TextBlock Text="{Binding NotWorkingMachines, StringFormat=Нерабочих: {0}}"
+                           Foreground="#B42318"
+                           FontSize="12"
+                           HorizontalAlignment="Right"/>
+                <TextBlock Text="{Binding LastUpdatedText, StringFormat=Обновлено: {0}}"
+                           Foreground="#6B7280"
+                           FontSize="12"
+                           HorizontalAlignment="Right"/>
+                <TextBlock Text="{Binding SelectedMachineHint}"
+                           Foreground="#6B7280"
+                           FontSize="12"
+                           HorizontalAlignment="Right"/>
+            </StackPanel>
         </Grid>
     </Grid>
 </UserControl>
